@@ -20,6 +20,7 @@ biocromop/
 │   ├── biocroissant_to_omop.py      # Bio-Croissant → OMOP CDM converter
 │   └── generate_synthetic_dataset.py # Synthetic OMOP data generator
 ├── tests/                  # Test suite (16 tests, 100% passing)
+│   └── test-results/       # Test output files (gitignored)
 ├── scripts/                # Validation utilities
 ├── docs/                   # Documentation
 │   ├── specifications/     # Bio-Croissant specs (v0.1, v0.2, v0.3)
@@ -27,7 +28,12 @@ biocromop/
 │   ├── examples/          # Bio-Croissant example files
 │   ├── Croissant specs 1.0/    # MLCommons Croissant reference specs
 │   └── OMOP CDM specs 5.4/     # OMOP CDM reference documentation
-├── data/                   # Generated synthetic data and metadata
+├── data/                   # Data files
+│   ├── generated/          # Synthetic OMOP CDM source data
+│   ├── metadata/           # Bio-Croissant metadata (v0.2, v0.3)
+│   └── converted/          # OMOP CDM converted outputs
+│       ├── omop_from_biocroissant_v0.2/  # Converted from v0.2
+│       └── omop_from_biocroissant_v0.3/  # Converted from v0.3
 ├── schema/                 # JSON-LD contexts, JSON Schemas, value domains
 └── README.md              # Project documentation
 ```
@@ -65,10 +71,17 @@ biocromop/
   - CSV field/table level specifications
   - Oncology extension metadata
 
-### Generated Data
+### Data Files
 
-- `data/generated/` - Synthetic OMOP CDM data (1,000 patients, 3,043 conditions)
-- `data/metadata/` - Bio-Croissant metadata files (v0.2 and v0.3)
+- `data/generated/` - Synthetic OMOP CDM source data
+  - `person.csv` - 1,000 synthetic patients
+  - `condition_occurrence.csv` - 3,043 condition diagnoses
+- `data/metadata/` - Bio-Croissant metadata files
+  - `synthetic_dataset_v0.2.json` - v0.2 metadata
+  - `synthetic_dataset_v0.3.json` - v0.3 metadata with ISO 11179
+- `data/converted/` - OMOP CDM converted outputs (tracked in git)
+  - `omop_from_biocroissant_v0.2/` - Conversion from v0.2 metadata (CSV, DDL, SQL)
+  - `omop_from_biocroissant_v0.3/` - Conversion from v0.3 metadata (CSV, DDL, SQL)
 
 ## OMOP CDM v5.4 Architecture
 
@@ -159,9 +172,16 @@ pipenv run python3 src/generate_synthetic_dataset.py
 
 ### Converting Bio-Croissant to OMOP CDM
 ```bash
+# Convert v0.2 metadata to OMOP CDM format
 pipenv run python3 src/biocroissant_to_omop.py \
   data/metadata/synthetic_dataset_v0.2.json \
-  output_directory \
+  data/converted/omop_from_biocroissant_v0.2 \
+  --format both --dialect postgresql
+
+# Convert v0.3 metadata to OMOP CDM format
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.3.json \
+  data/converted/omop_from_biocroissant_v0.3 \
   --format both --dialect postgresql
 ```
 
@@ -263,10 +283,11 @@ To create new Bio-Croissant metadata files:
 Before submitting Bio-Croissant metadata:
 
 - [ ] Valid JSON-LD syntax
-- [ ] Conforms to both Croissant 1.0 and Bio-Croissant 0.1
+- [ ] Conforms to both Croissant 1.0 and Bio-Croissant (0.2 or 0.3)
 - [ ] De-identification method declared (for human data)
 - [ ] Access control specified (if authenticated)
 - [ ] Concept fields reference vocabularies with versions
 - [ ] Foreign key relationships properly defined
 - [ ] Physical units specified for imaging data
 - [ ] File checksums provided (recommended)
+- [ ] ISO 11179 metadata included for v0.3 (data element concepts, value domains)
