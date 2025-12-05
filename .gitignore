@@ -53,10 +53,9 @@ omop_output_v03/
 *.zip
 *.html
 Croissant*_files/
-OMOP*_files/
-OMOPCDM_*.sql
-OMOP_CDM_Oncology*.csv
-OMOP_CDMv*.csv
 
 # BIO folder (archive materials)
 BIO/
+
+# OMOP CDM reference specs (kept for reference but not tracked)
+docs/OMOP CDM specs 5.4/
