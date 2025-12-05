@@ -1,0 +1,440 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "bio": "http://mlcommons.org/croissant/bio/0.2/",
+    "wsi": "http://mlcommons.org/croissant/bio/wsi/0.2/",
+    "bioschemas": "https://bioschemas.org/",
+    "obo": "http://purl.obolibrary.org/obo/"
+  },
+  "@type": ["sc:Dataset", "bioschemas:Dataset"],
+  "dct:conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/bio/0.2"
+  ],
+  "bio:conformanceLevel": "Level 2",
+  "bio:extensions": ["wsi"],
+  "name": "Breast Cancer Whole Slide Image Dataset",
+  "description": "Collection of H&E stained whole slide images from breast cancer tissue samples. Includes pathologist annotations for tumor regions, benign areas, and normal tissue. Images scanned at 40x magnification with multi-resolution pyramids for efficient viewing and analysis.",
+  "url": "https://example.org/datasets/breast-cancer-wsi",
+  "version": "1.2.0",
+  "datePublished": "2025-10-20",
+  "dateCreated": "2025-06-01",
+  "dateModified": "2025-10-20",
+  "license": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "creator": [
+    {
+      "@type": "Organization",
+      "name": "Pathology AI Research Consortium",
+      "url": "https://example.org/pathology-ai"
+    }
+  ],
+  "keywords": [
+    "digital pathology",
+    "whole slide imaging",
+    "breast cancer",
+    "histopathology",
+    "H&E staining",
+    "tumor annotation"
+  ],
+  "bio:dataCategory": ["imaging", "pathology", "clinical"],
+  "bio:deidentificationMethod": "HIPAA Safe Harbor with pathology report PHI removal",
+  "bio:cohortDescription": "Breast cancer tissue samples from 500 patients diagnosed between 2020-2024. Includes invasive ductal carcinoma (IDC), invasive lobular carcinoma (ILC), and ductal carcinoma in situ (DCIS).",
+  "bio:specimenType": ["tissue", "FFPE"],
+  "bio:tissueSource": "breast",
+  "bio:clinicalStudyType": "observational",
+  "bio:authenticatedAccess": true,
+  "bio:accessControlMechanism": "Institutional DAC approval required",
+  "bio:accessControlEndpoint": "https://example.org/pathology-ai/access",
+  "bio:dataAccessCommittee": {
+    "@type": "sc:Organization",
+    "name": "Pathology AI Data Access Committee",
+    "email": "dac@example.org"
+  },
+  "bio:dataUseOntology": [
+    "http://purl.obolibrary.org/obo/DUO_0000006",
+    "http://purl.obolibrary.org/obo/DUO_0000018",
+    "http://purl.obolibrary.org/obo/DUO_0000042"
+  ],
+  "bio:qualityMetrics": {
+    "bio:completeness": {
+      "overall": 0.96,
+      "slides": 1.0,
+      "annotations": 0.94,
+      "clinical_metadata": 0.95
+    }
+  },
+  "wsi:scannerManufacturer": "Aperio",
+  "wsi:scannerModel": "AT2",
+  "wsi:magnification": 40,
+  "wsi:tissueType": ["breast cancer", "normal breast tissue"],
+  "wsi:stainType": ["H&E"],
+  "bioschemas:taxonomicRange": "http://purl.obolibrary.org/obo/NCBITaxon_9606",
+  "bioschemas:variableMeasured": [
+    "tumor grade",
+    "tumor subtype",
+    "mitotic count",
+    "tumor-infiltrating lymphocytes"
+  ],
+  "citeAs": "@article{pathology2025breast, title={Breast Cancer WSI Dataset for AI}, journal={Digital Pathology}, year={2025}}",
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "wsi_files",
+      "name": "Whole Slide Image Files",
+      "description": "SVS format whole slide images",
+      "encodingFormat": "image/svs",
+      "includes": "slides/*.svs",
+      "wsi:compressionFormat": "JPEG"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "slide_metadata",
+      "name": "Slide Metadata",
+      "contentUrl": "https://example.org/data/slide_metadata.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "abcd1234567890abcd1234567890abcd1234567890abcd1234567890abcd1234",
+      "contentSize": "75 KB",
+      "description": "Clinical and technical metadata for each slide"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "annotation_files",
+      "name": "Pathologist Annotations",
+      "description": "GeoJSON format annotations",
+      "encodingFormat": "application/geo+json",
+      "includes": "annotations/*.geojson"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "tile_manifest",
+      "name": "Tile Extraction Manifest",
+      "contentUrl": "https://example.org/data/tile_manifest.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "7890abcdef1234567890abcdef1234567890abcdef1234567890abcdef123456",
+      "contentSize": "2.3 MB",
+      "description": "Pre-defined tile coordinates for patch-based training"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "thumbnail_images",
+      "name": "Slide Thumbnails",
+      "description": "Low-resolution overview images",
+      "encodingFormat": "image/jpeg",
+      "includes": "thumbnails/*.jpg"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "slides",
+      "name": "Whole Slide Images",
+      "description": "H&E stained breast tissue whole slide images with metadata",
+      "key": [{ "@id": "slides/slide_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "slides/slide_id",
+          "name": "slide_id",
+          "description": "Unique slide identifier",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "slide_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/wsi_image",
+          "name": "Whole Slide Image",
+          "description": "Multi-resolution pyramidal whole slide image",
+          "dataType": "wsi:WholeSlideImage",
+          "wsi:pyramidLevels": 8,
+          "wsi:baseMagnification": 40,
+          "wsi:tileWidth": 256,
+          "wsi:tileHeight": 256,
+          "wsi:slideWidth": 120000,
+          "wsi:slideHeight": 95000,
+          "wsi:mppX": 0.25,
+          "wsi:mppY": 0.25,
+          "wsi:compressionFormat": "JPEG",
+          "wsi:colorSpace": "RGB",
+          "wsi:bitsPerSample": 8,
+          "source": {
+            "fileSet": { "@id": "wsi_files" },
+            "extract": { "wsi:filePattern": "{slide_id}.svs" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/thumbnail",
+          "name": "Thumbnail",
+          "description": "Low-resolution thumbnail for quick preview",
+          "dataType": "sc:ImageObject",
+          "source": {
+            "fileSet": { "@id": "thumbnail_images" },
+            "extract": { "wsi:filePattern": "{slide_id}_thumbnail.jpg" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/patient_id",
+          "name": "patient_id",
+          "description": "De-identified patient identifier",
+          "dataType": "sc:Text",
+          "bio:deidentificationNote": "Random identifier, no link to original patient ID",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "patient_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/diagnosis",
+          "name": "Diagnosis",
+          "description": "Primary pathological diagnosis",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "diagnosis" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/tumor_grade",
+          "name": "Tumor Grade",
+          "description": "Nottingham histologic grade (1-3)",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "tumor_grade" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/er_status",
+          "name": "ER Status",
+          "description": "Estrogen receptor status (positive/negative)",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "er_status" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/pr_status",
+          "name": "PR Status",
+          "description": "Progesterone receptor status (positive/negative)",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "pr_status" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/her2_status",
+          "name": "HER2 Status",
+          "description": "HER2 receptor status (positive/negative)",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "her2_status" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "slides/scan_date",
+          "name": "Scan Date",
+          "description": "Date slide was scanned",
+          "dataType": "sc:Date",
+          "source": {
+            "fileObject": { "@id": "slide_metadata" },
+            "extract": { "column": "scan_date" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "annotations",
+      "name": "Pathologist Annotations",
+      "description": "Tumor region annotations by board-certified pathologists",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "annotations/slide_id",
+          "name": "slide_id",
+          "description": "Foreign key to slides",
+          "dataType": "sc:Text",
+          "references": { "@id": "slides/slide_id" },
+          "source": {
+            "fileSet": { "@id": "annotation_files" },
+            "extract": { "jsonPath": "$.slide_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "annotations/tumor_regions",
+          "name": "Tumor Regions",
+          "description": "Polygon annotations of invasive tumor areas",
+          "dataType": "wsi:Annotation",
+          "repeated": true,
+          "wsi:annotationType": "polygon",
+          "wsi:annotationClass": "invasive_tumor",
+          "source": {
+            "fileSet": { "@id": "annotation_files" },
+            "extract": {
+              "jsonPath": "$.features[?(@.properties.class=='invasive_tumor')].geometry.coordinates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "annotations/dcis_regions",
+          "name": "DCIS Regions",
+          "description": "Polygon annotations of DCIS areas",
+          "dataType": "wsi:Annotation",
+          "repeated": true,
+          "wsi:annotationType": "polygon",
+          "wsi:annotationClass": "dcis",
+          "source": {
+            "fileSet": { "@id": "annotation_files" },
+            "extract": {
+              "jsonPath": "$.features[?(@.properties.class=='dcis')].geometry.coordinates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "annotations/normal_regions",
+          "name": "Normal Tissue Regions",
+          "description": "Polygon annotations of normal breast tissue",
+          "dataType": "wsi:Annotation",
+          "repeated": true,
+          "wsi:annotationType": "polygon",
+          "wsi:annotationClass": "normal",
+          "source": {
+            "fileSet": { "@id": "annotation_files" },
+            "extract": {
+              "jsonPath": "$.features[?(@.properties.class=='normal')].geometry.coordinates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "annotations/pathologist",
+          "name": "Annotating Pathologist",
+          "description": "De-identified pathologist ID",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": { "@id": "annotation_files" },
+            "extract": { "jsonPath": "$.pathologist_id" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "tiles",
+      "name": "Extracted Tiles",
+      "description": "Pre-defined tile coordinates for patch-based model training",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/slide_id",
+          "name": "slide_id",
+          "description": "Foreign key to slides",
+          "dataType": "sc:Text",
+          "references": { "@id": "slides/slide_id" },
+          "source": {
+            "fileObject": { "@id": "tile_manifest" },
+            "extract": { "column": "slide_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/tile_id",
+          "name": "tile_id",
+          "description": "Unique tile identifier",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "tile_manifest" },
+            "extract": { "column": "tile_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/location",
+          "name": "Tile Location",
+          "description": "Tile extraction coordinates",
+          "dataType": "wsi:TileLocator",
+          "wsi:pyramidLevel": 0,
+          "wsi:tileSize": 512,
+          "subField": [
+            {
+              "@type": "cr:Field",
+              "@id": "tiles/location/x",
+              "name": "x",
+              "dataType": "sc:Integer",
+              "description": "X coordinate at base resolution",
+              "source": {
+                "fileObject": { "@id": "tile_manifest" },
+                "extract": { "column": "x_coord" }
+              }
+            },
+            {
+              "@type": "cr:Field",
+              "@id": "tiles/location/y",
+              "name": "y",
+              "dataType": "sc:Integer",
+              "description": "Y coordinate at base resolution",
+              "source": {
+                "fileObject": { "@id": "tile_manifest" },
+                "extract": { "column": "y_coord" }
+              }
+            }
+          ]
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/tissue_label",
+          "name": "Tissue Label",
+          "description": "Ground truth label for tile",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "tile_manifest" },
+            "extract": { "column": "label" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/tissue_percentage",
+          "name": "Tissue Percentage",
+          "description": "Percentage of tile containing tissue (vs background)",
+          "dataType": "sc:Float",
+          "source": {
+            "fileObject": { "@id": "tile_manifest" },
+            "extract": { "column": "tissue_pct" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tiles/split",
+          "name": "Data Split",
+          "description": "Train/validation/test split assignment",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "tile_manifest" },
+            "extract": { "column": "split" }
+          }
+        }
+      ]
+    }
+  ]
+}

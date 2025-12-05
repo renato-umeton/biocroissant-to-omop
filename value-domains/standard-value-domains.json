@@ -1,0 +1,466 @@
+{
+  "@context": {
+    "iso11179": "http://mlcommons.org/croissant/bio/iso11179/0.3/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@type": "iso11179:ValueDomainRegistry",
+  "name": "Bio-Croissant Standard Value Domains",
+  "version": "0.3",
+  "description": "Standard value domains for Bio-Croissant metadata",
+  "valueDomains": [
+    {
+      "@id": "vd:DataCategory",
+      "@type": "iso11179:ValueDomain",
+      "name": "Data Category",
+      "iso11179:definition": "Classification of the primary types of data contained in a biomedical dataset",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "clinical",
+          "meaning": "Patient clinical care data including diagnoses, procedures, and observations",
+          "iso11179:valueMeaningId": "vm:ClinicalData"
+        },
+        {
+          "value": "imaging",
+          "meaning": "Medical or biological imaging data from microscopy, radiology, or pathology",
+          "iso11179:valueMeaningId": "vm:ImagingData"
+        },
+        {
+          "value": "omics",
+          "meaning": "Genomics, transcriptomics, proteomics, metabolomics, or other molecular data",
+          "iso11179:valueMeaningId": "vm:OmicsData"
+        },
+        {
+          "value": "pathology",
+          "meaning": "Anatomic pathology data including tissue analysis and diagnosis",
+          "iso11179:valueMeaningId": "vm:PathologyData"
+        },
+        {
+          "value": "cellular",
+          "meaning": "Cell-level biological data from microscopy or flow cytometry",
+          "iso11179:valueMeaningId": "vm:CellularData"
+        },
+        {
+          "value": "molecular",
+          "meaning": "Molecular structure, interaction, or dynamics data",
+          "iso11179:valueMeaningId": "vm:MolecularData"
+        },
+        {
+          "value": "animal",
+          "meaning": "Animal model or veterinary data",
+          "iso11179:valueMeaningId": "vm:AnimalData"
+        },
+        {
+          "value": "synthetic",
+          "meaning": "Computationally generated or simulated data",
+          "iso11179:valueMeaningId": "vm:SyntheticData"
+        },
+        {
+          "value": "human",
+          "meaning": "Human subject derived data",
+          "iso11179:valueMeaningId": "vm:HumanData"
+        },
+        {
+          "value": "patient",
+          "meaning": "Individual patient health data from clinical care",
+          "iso11179:valueMeaningId": "vm:PatientData"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:RegistrationStatus",
+      "@type": "iso11179:ValueDomain",
+      "name": "Registration Status",
+      "iso11179:definition": "Lifecycle status of metadata item registration per ISO 11179-6",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "draft",
+          "meaning": "Under development, not yet reviewed or approved"
+        },
+        {
+          "value": "candidate",
+          "meaning": "Submitted for review and approval"
+        },
+        {
+          "value": "standard",
+          "meaning": "Approved and in active use"
+        },
+        {
+          "value": "preferred",
+          "meaning": "Recommended for new use cases"
+        },
+        {
+          "value": "deprecated",
+          "meaning": "Superseded but still valid for existing uses"
+        },
+        {
+          "value": "retired",
+          "meaning": "No longer valid for any use"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:DeidentificationMethod",
+      "@type": "iso11179:ValueDomain",
+      "name": "Deidentification Method",
+      "iso11179:definition": "Technique or standard used to remove personally identifiable information",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "HIPAA Safe Harbor",
+          "meaning": "HIPAA Privacy Rule Safe Harbor method - removal of 18 identifier types"
+        },
+        {
+          "value": "HIPAA Expert Determination",
+          "meaning": "HIPAA Privacy Rule Expert Determination - statistical deidentification"
+        },
+        {
+          "value": "Anonymization",
+          "meaning": "Irreversible removal of all identifiers preventing re-identification"
+        },
+        {
+          "value": "Pseudonymization",
+          "meaning": "Replacement of identifiers with pseudonyms allowing re-identification with key"
+        },
+        {
+          "value": "K-Anonymity",
+          "meaning": "Generalization ensuring each record indistinguishable from k-1 others"
+        },
+        {
+          "value": "Differential Privacy",
+          "meaning": "Statistical noise addition providing mathematical privacy guarantees"
+        },
+        {
+          "value": "Synthetic",
+          "meaning": "Computationally generated data preserving statistical properties"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:ClinicalStudyType",
+      "@type": "iso11179:ValueDomain",
+      "name": "Clinical Study Type",
+      "iso11179:definition": "Classification of clinical research study design",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "observational",
+          "meaning": "Observation of participants without intervention"
+        },
+        {
+          "value": "interventional",
+          "meaning": "Active intervention or treatment administered"
+        },
+        {
+          "value": "registry",
+          "meaning": "Collection of standardized data about specific condition or exposure"
+        },
+        {
+          "value": "case-control",
+          "meaning": "Retrospective comparison of cases with disease to controls without"
+        },
+        {
+          "value": "cohort",
+          "meaning": "Prospective follow-up of exposed and unexposed groups"
+        },
+        {
+          "value": "cross-sectional",
+          "meaning": "Single time point observation of population"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:OMOPTableDomain",
+      "@type": "iso11179:ValueDomain",
+      "name": "OMOP Table Domain",
+      "iso11179:definition": "Classification of OMOP CDM table types",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "Clinical",
+          "meaning": "Patient-level clinical events and facts"
+        },
+        {
+          "value": "Vocabulary",
+          "meaning": "Standardized vocabulary and concept tables"
+        },
+        {
+          "value": "Health Economics",
+          "meaning": "Cost, payer, and health economics information"
+        },
+        {
+          "value": "Derived",
+          "meaning": "Tables derived from clinical data for analysis"
+        },
+        {
+          "value": "System",
+          "meaning": "Metadata and system configuration tables"
+        },
+        {
+          "value": "Analysis",
+          "meaning": "Cohort definition and analysis results"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:OMOPDatabaseDialect",
+      "@type": "iso11179:ValueDomain",
+      "name": "OMOP Database Dialect",
+      "iso11179:definition": "Database management system used for OMOP CDM",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "postgresql",
+          "meaning": "PostgreSQL open-source relational database"
+        },
+        {
+          "value": "sql_server",
+          "meaning": "Microsoft SQL Server"
+        },
+        {
+          "value": "oracle",
+          "meaning": "Oracle Database"
+        },
+        {
+          "value": "redshift",
+          "meaning": "Amazon Redshift cloud data warehouse"
+        },
+        {
+          "value": "bigquery",
+          "meaning": "Google BigQuery serverless data warehouse"
+        },
+        {
+          "value": "snowflake",
+          "meaning": "Snowflake cloud data platform"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:ImageDimensionality",
+      "@type": "iso11179:ValueDomain",
+      "name": "Image Dimensionality",
+      "iso11179:definition": "Number and types of dimensions in microscopy or medical imaging data",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "2D",
+          "meaning": "Two-dimensional (X, Y spatial dimensions)"
+        },
+        {
+          "value": "3D",
+          "meaning": "Three-dimensional (X, Y, Z spatial dimensions)"
+        },
+        {
+          "value": "4D",
+          "meaning": "3D plus time (X, Y, Z spatial, T temporal)"
+        },
+        {
+          "value": "5D",
+          "meaning": "3D plus time and channels (X, Y, Z spatial, T temporal, C channels)"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:PixelFormat",
+      "@type": "iso11179:ValueDomain",
+      "name": "Pixel Format",
+      "iso11179:definition": "Data type used to represent pixel intensity values",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "uint8",
+          "meaning": "8-bit unsigned integer (0-255)"
+        },
+        {
+          "value": "uint16",
+          "meaning": "16-bit unsigned integer (0-65535)"
+        },
+        {
+          "value": "uint32",
+          "meaning": "32-bit unsigned integer (0-4294967295)"
+        },
+        {
+          "value": "int8",
+          "meaning": "8-bit signed integer (-128 to 127)"
+        },
+        {
+          "value": "int16",
+          "meaning": "16-bit signed integer (-32768 to 32767)"
+        },
+        {
+          "value": "int32",
+          "meaning": "32-bit signed integer"
+        },
+        {
+          "value": "float32",
+          "meaning": "32-bit floating point"
+        },
+        {
+          "value": "float64",
+          "meaning": "64-bit floating point (double precision)"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:HistologicalStainType",
+      "@type": "iso11179:ValueDomain",
+      "name": "Histological Stain Type",
+      "iso11179:definition": "Chemical staining method used for tissue visualization",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "H&E",
+          "meaning": "Hematoxylin and Eosin - nuclei blue, cytoplasm pink"
+        },
+        {
+          "value": "IHC",
+          "meaning": "Immunohistochemistry - antibody-based specific protein detection"
+        },
+        {
+          "value": "PAS",
+          "meaning": "Periodic Acid-Schiff - carbohydrates and basement membranes magenta"
+        },
+        {
+          "value": "Trichrome",
+          "meaning": "Masson's Trichrome - collagen blue, muscle red"
+        },
+        {
+          "value": "Gram",
+          "meaning": "Gram stain - bacterial classification purple/pink"
+        },
+        {
+          "value": "Giemsa",
+          "meaning": "Giemsa stain - blood cells and parasites"
+        },
+        {
+          "value": "AFB",
+          "meaning": "Acid-fast bacilli - mycobacteria red"
+        },
+        {
+          "value": "Silver",
+          "meaning": "Silver stain - reticular fibers and fungi black"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:OpticalMagnification",
+      "@type": "iso11179:ValueDomain",
+      "name": "Optical Magnification",
+      "iso11179:definition": "Magnification power of microscope objective lens",
+      "iso11179:datatype": "Integer",
+      "iso11179:unitOfMeasure": "times",
+      "iso11179:permissibleValues": [
+        {
+          "value": 2,
+          "meaning": "2x magnification (scanning)"
+        },
+        {
+          "value": 4,
+          "meaning": "4x magnification (scanning)"
+        },
+        {
+          "value": 10,
+          "meaning": "10x magnification (low power)"
+        },
+        {
+          "value": 20,
+          "meaning": "20x magnification (medium power)"
+        },
+        {
+          "value": 40,
+          "meaning": "40x magnification (high power)"
+        },
+        {
+          "value": 60,
+          "meaning": "60x magnification (oil immersion)"
+        },
+        {
+          "value": 100,
+          "meaning": "100x magnification (oil immersion)"
+        }
+      ]
+    },
+
+    {
+      "@id": "vd:CompletenessRatio",
+      "@type": "iso11179:ValueDomain",
+      "name": "Completeness Ratio",
+      "iso11179:definition": "Proportion of required data elements that are populated",
+      "iso11179:datatype": "Decimal",
+      "iso11179:minimumValue": 0.0,
+      "iso11179:maximumValue": 1.0,
+      "iso11179:format": "0.00"
+    },
+
+    {
+      "@id": "vd:OMOPConceptID",
+      "@type": "iso11179:ValueDomain",
+      "name": "OMOP Concept ID",
+      "iso11179:definition": "Unique identifier referencing a standardized concept in OMOP vocabulary",
+      "iso11179:datatype": "Integer",
+      "iso11179:minimumValue": 0,
+      "iso11179:maximumValue": 2147483647
+    },
+
+    {
+      "@id": "vd:ISO8601Date",
+      "@type": "iso11179:ValueDomain",
+      "name": "ISO 8601 Date",
+      "iso11179:definition": "Calendar date in ISO 8601 format",
+      "iso11179:datatype": "Date",
+      "iso11179:format": "YYYY-MM-DD"
+    },
+
+    {
+      "@id": "vd:ISO8601DateTime",
+      "@type": "iso11179:ValueDomain",
+      "name": "ISO 8601 DateTime",
+      "iso11179:definition": "Date and time in ISO 8601 format with timezone",
+      "iso11179:datatype": "DateTime",
+      "iso11179:format": "YYYY-MM-DDTHH:MM:SSZ"
+    },
+
+    {
+      "@id": "vd:PhysicalSizeMicrometers",
+      "@type": "iso11179:ValueDomain",
+      "name": "Physical Size in Micrometers",
+      "iso11179:definition": "Physical dimension measured in micrometers",
+      "iso11179:datatype": "Decimal",
+      "iso11179:unitOfMeasure": "micrometer",
+      "iso11179:minimumValue": 0.001,
+      "iso11179:maximumValue": 10000.0
+    },
+
+    {
+      "@id": "vd:ConformanceLevel",
+      "@type": "iso11179:ValueDomain",
+      "name": "Bio-Croissant Conformance Level",
+      "iso11179:definition": "Level of conformance to Bio-Croissant specification",
+      "iso11179:datatype": "String",
+      "iso11179:permissibleValues": [
+        {
+          "value": "Level 1",
+          "meaning": "Basic Bio-Croissant metadata without ISO 11179 enhancements"
+        },
+        {
+          "value": "Level 2",
+          "meaning": "ISO 11179 enhanced with administrative metadata and value domains"
+        },
+        {
+          "value": "Level 3",
+          "meaning": "Full metadata registry with complete ISO 11179 metadata"
+        }
+      ]
+    }
+  ]
+}

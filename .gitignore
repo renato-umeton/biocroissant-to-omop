@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pipenv
+Pipfile.lock
+
+# Generated OMOP outputs (can be regenerated)
+omop_output_v02/
+omop_output_v03/
+
+# Downloaded reference files (not part of project)
+*.zip
+*.html
+Croissant*_files/
+OMOP*_files/
+OMOPCDM_*.sql
+OMOP_CDM_Oncology*.csv
+OMOP_CDMv*.csv
+
+# BIO folder (archive materials)
+BIO/

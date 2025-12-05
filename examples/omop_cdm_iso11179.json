@@ -1,0 +1,439 @@
+{
+  "@context": "https://mlcommons.org/croissant/bio/0.3/context",
+  "@type": ["sc:Dataset", "bioschemas:Dataset"],
+  "dct:conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/bio/0.3"
+  ],
+  "bio:conformanceLevel": "Level 3",
+  "bio:extensions": ["omop"],
+
+  "name": "OMOP CDM Synthetic Dataset with ISO 11179 Metadata",
+  "description": "Synthetic patient data following OMOP CDM v5.4 for machine learning research. Demonstrates ISO 11179 metadata registry features including data element concepts, value domains, and administrative metadata.",
+  "url": "https://example.org/datasets/synthetic-omop-iso11179",
+  "version": "2.0.0",
+  "datePublished": "2025-12-04",
+  "dateCreated": "2025-11-01",
+  "dateModified": "2025-12-04",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+
+  "creator": [
+    {
+      "@type": "Organization",
+      "name": "Example Medical Research Center",
+      "url": "https://example.org"
+    }
+  ],
+
+  "keywords": [
+    "healthcare",
+    "clinical data",
+    "OMOP CDM",
+    "synthetic data",
+    "ISO 11179",
+    "metadata registry"
+  ],
+
+  "bio:dataCategory": ["clinical", "synthetic"],
+  "bio:deidentificationMethod": "Synthetic",
+  "bio:cohortDescription": "Synthetic cohort of 10,000 patients with diverse conditions including diabetes, hypertension, and cardiovascular disease. Age range 18-90 years.",
+  "bio:clinicalStudyType": "observational",
+  "bio:authenticatedAccess": false,
+
+  "omop:cdmVersion": "5.4",
+  "omop:cdmSourceName": "Synthetic_OMOP_ISO11179_Example",
+  "omop:vocabularyVersion": "2024-10-01",
+  "omop:databaseDialect": "postgresql",
+
+  "bio:qualityMetrics": {
+    "bio:completeness": {
+      "overall": 0.98,
+      "PERSON": 1.0,
+      "CONDITION_OCCURRENCE": 0.96
+    }
+  },
+
+  "iso11179:registrationAuthority": {
+    "@type": "sc:Organization",
+    "name": "MLCommons Bio-Croissant Working Group",
+    "url": "https://mlcommons.org/bio-croissant",
+    "email": "bio-croissant@mlcommons.org"
+  },
+
+  "iso11179:registrationStatus": "standard",
+
+  "iso11179:steward": {
+    "@type": "sc:Person",
+    "name": "Dr. Jane Smith",
+    "email": "j.smith@example.org",
+    "affiliation": {
+      "@type": "sc:Organization",
+      "name": "Medical AI Research Center"
+    }
+  },
+
+  "iso11179:submitter": {
+    "@type": "sc:Person",
+    "name": "Dr. John Doe",
+    "email": "j.doe@example.org"
+  },
+
+  "iso11179:registeredDate": "2025-12-04T10:00:00Z",
+  "iso11179:lastReviewedDate": "2025-12-04T10:00:00Z",
+  "iso11179:changeDescription": "Initial v0.3 registration with complete ISO 11179 metadata including data element concepts and value domains for all fields",
+
+  "citeAs": "@misc{synthetic_omop_iso11179_2025, title={OMOP CDM Synthetic Dataset with ISO 11179 Metadata}, author={Example Medical Research Center}, year={2025}, publisher={Example Repository}}",
+
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "person_csv",
+      "name": "PERSON table",
+      "contentUrl": "https://example.org/data/person.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "contentSize": "2.5 MB",
+      "description": "OMOP PERSON table containing demographic information"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "condition_occurrence_csv",
+      "name": "CONDITION_OCCURRENCE table",
+      "contentUrl": "https://example.org/data/condition_occurrence.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "contentSize": "25.8 MB",
+      "description": "OMOP CONDITION_OCCURRENCE table with diagnosis records"
+    }
+  ],
+
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "person",
+      "name": "PERSON",
+      "description": "Demographics and basic patient information per OMOP CDM PERSON table",
+      "omop:cdmTable": "PERSON",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+
+      "iso11179:classifiedBy": [
+        {"@id": "ci:Demographics"},
+        {"@id": "ci:ClinicalData"}
+      ],
+
+      "key": [{ "@id": "person/person_id" }],
+
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "person/person_id",
+          "name": "Person ID",
+          "description": "Unique identifier for each person in the database",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "person_id",
+          "omop:isRequired": true,
+          "omop:isPrimaryKey": true,
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:Person.Identifier",
+            "iso11179:objectClass": "Person",
+            "iso11179:property": "Unique Identifier",
+            "iso11179:definition": "A unique integer assigned to each person record to identify them throughout the database",
+            "iso11179:classificationScheme": ["Demographics", "Identifiers"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:PositiveInteger",
+            "iso11179:datatype": "Integer",
+            "iso11179:minimumValue": 1,
+            "iso11179:maximumValue": 2147483647
+          },
+
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "person_id" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "person/gender_concept_id",
+          "name": "Gender Concept ID",
+          "description": "Standard concept for biological sex at birth from OMOP Gender domain",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "gender_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:foreignKeyField": "concept_id",
+          "omop:conceptDomain": "Gender",
+
+          "bio:vocabulary": "OMOP Gender",
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:Person.GenderAtBirth",
+            "iso11179:objectClass": "Person",
+            "iso11179:property": "Gender at Birth",
+            "iso11179:definition": "The biological sex of a person as determined or assumed at birth",
+            "iso11179:conceptualDomain": {"@id": "cd:BiologicalSex"},
+            "iso11179:classificationScheme": ["Demographics", "Gender"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:OMOPGenderConceptID",
+            "iso11179:datatype": "Integer",
+            "iso11179:definition": "OMOP concept ID from Gender domain",
+            "iso11179:permissibleValues": [
+              {
+                "value": 8507,
+                "meaning": "Male - biological sex characterized by production of small gametes",
+                "iso11179:valueMeaningId": "vm:Male"
+              },
+              {
+                "value": 8532,
+                "meaning": "Female - biological sex characterized by production of large gametes",
+                "iso11179:valueMeaningId": "vm:Female"
+              },
+              {
+                "value": 8551,
+                "meaning": "Unknown - gender information not available or not recorded",
+                "iso11179:valueMeaningId": "vm:Unknown"
+              },
+              {
+                "value": 0,
+                "meaning": "No matching concept - used when source value has no standard mapping",
+                "iso11179:valueMeaningId": "vm:NoMatchingConcept"
+              }
+            ]
+          },
+
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "gender_concept_id" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "person/year_of_birth",
+          "name": "Year of Birth",
+          "description": "The year in which the person was born (synthetic value)",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "year_of_birth",
+          "omop:isRequired": true,
+
+          "bio:deidentificationNote": "Synthetic year generated to preserve age distribution while preventing identification",
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:Person.BirthYear",
+            "iso11179:objectClass": "Person",
+            "iso11179:property": "Birth Year",
+            "iso11179:definition": "The calendar year in which a person was born",
+            "iso11179:classificationScheme": ["Demographics", "Temporal"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:HistoricalYear",
+            "iso11179:datatype": "Integer",
+            "iso11179:minimumValue": 1900,
+            "iso11179:maximumValue": 2025,
+            "iso11179:format": "YYYY"
+          },
+
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "year_of_birth" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "person/race_concept_id",
+          "name": "Race Concept ID",
+          "description": "Standard concept for race from OMOP Race domain",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "race_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:conceptDomain": "Race",
+
+          "bio:vocabulary": "OMOP Race",
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:Person.Race",
+            "iso11179:objectClass": "Person",
+            "iso11179:property": "Race",
+            "iso11179:definition": "A person's self-identified race category based on social and cultural identity",
+            "iso11179:conceptualDomain": {"@id": "cd:RaceCategory"},
+            "iso11179:classificationScheme": ["Demographics", "Race and Ethnicity"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:OMOPRaceConceptID",
+            "iso11179:datatype": "Integer",
+            "iso11179:definition": "OMOP concept ID from Race domain",
+            "iso11179:conceptualDomain": {"@id": "cd:RaceCategory"}
+          },
+
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "race_concept_id" }
+          }
+        }
+      ]
+    },
+
+    {
+      "@type": "cr:RecordSet",
+      "@id": "condition_occurrence",
+      "name": "CONDITION_OCCURRENCE",
+      "description": "Patient condition diagnoses and health problems per OMOP CDM CONDITION_OCCURRENCE table",
+      "omop:cdmTable": "CONDITION_OCCURRENCE",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+
+      "iso11179:classifiedBy": [
+        {"@id": "ci:Diagnoses"},
+        {"@id": "ci:ClinicalEvents"}
+      ],
+
+      "key": [{ "@id": "condition_occurrence/condition_occurrence_id" }],
+
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_occurrence_id",
+          "name": "Condition Occurrence ID",
+          "description": "Unique identifier for each condition occurrence record",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "condition_occurrence_id",
+          "omop:isPrimaryKey": true,
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:ConditionOccurrence.Identifier",
+            "iso11179:objectClass": "Condition Occurrence",
+            "iso11179:property": "Unique Identifier",
+            "iso11179:definition": "A unique integer assigned to each condition occurrence record"
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:PositiveInteger",
+            "iso11179:datatype": "Integer",
+            "iso11179:minimumValue": 1
+          },
+
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_occurrence_id" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/person_id",
+          "name": "Person ID",
+          "description": "Foreign key reference to the person who experienced the condition",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "person_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "PERSON",
+          "omop:foreignKeyField": "person_id",
+
+          "references": { "@id": "person/person_id" },
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:ConditionOccurrence.PersonReference",
+            "iso11179:objectClass": "Condition Occurrence",
+            "iso11179:property": "Person Reference",
+            "iso11179:definition": "The person who experienced this condition occurrence"
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:PersonIDReference",
+            "iso11179:datatype": "Integer",
+            "iso11179:definition": "Reference to valid person_id in PERSON table"
+          },
+
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "person_id" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_concept_id",
+          "name": "Condition Concept ID",
+          "description": "Standard SNOMED CT concept representing the diagnosed condition",
+          "dataType": "sc:Integer",
+
+          "omop:cdmField": "condition_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:conceptDomain": "Condition",
+
+          "bio:vocabulary": "SNOMED CT",
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:ConditionOccurrence.StandardConcept",
+            "iso11179:objectClass": "Condition Occurrence",
+            "iso11179:property": "Standard Medical Concept",
+            "iso11179:definition": "The standardized clinical concept representing the diagnosed health condition using SNOMED CT vocabulary",
+            "iso11179:conceptualDomain": {"@id": "cd:MedicalCondition"},
+            "iso11179:classificationScheme": ["Diagnoses", "SNOMED CT Concepts"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:OMOPConditionConceptID",
+            "iso11179:datatype": "Integer",
+            "iso11179:definition": "OMOP concept ID from Condition domain mapped to SNOMED CT",
+            "iso11179:conceptualDomain": {"@id": "cd:MedicalCondition"}
+          },
+
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_concept_id" }
+          }
+        },
+
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_start_date",
+          "name": "Condition Start Date",
+          "description": "The date when the condition was first recorded or diagnosed (synthetic date)",
+          "dataType": "sc:Date",
+
+          "omop:cdmField": "condition_start_date",
+          "omop:isRequired": true,
+
+          "bio:deidentificationNote": "Dates shifted by random offset per patient to preserve temporal relationships while preventing identification",
+
+          "iso11179:dataElementConcept": {
+            "@id": "dec:ConditionOccurrence.StartDate",
+            "iso11179:objectClass": "Condition Occurrence",
+            "iso11179:property": "Start Date",
+            "iso11179:definition": "The calendar date on which the condition was first diagnosed, observed, or recorded",
+            "iso11179:classificationScheme": ["Temporal", "Clinical Events"]
+          },
+
+          "iso11179:valueDomain": {
+            "@id": "vd:ISO8601Date",
+            "iso11179:datatype": "Date",
+            "iso11179:format": "YYYY-MM-DD"
+          },
+
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_start_date" }
+          }
+        }
+      ]
+    }
+  ]
+}

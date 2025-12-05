@@ -1,0 +1,371 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "bio": "http://mlcommons.org/croissant/bio/0.2/",
+    "omop": "http://mlcommons.org/croissant/bio/omop/0.2/",
+    "bioschemas": "https://bioschemas.org/"
+  },
+  "@type": ["sc:Dataset", "bioschemas:Dataset"],
+  "dct:conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/bio/0.2"
+  ],
+  "bio:conformanceLevel": "Level 2",
+  "bio:extensions": ["omop"],
+  "name": "Synthetic OMOP CDM v5.4 Dataset",
+  "description": "Synthetic patient data following OMOP CDM v5.4 for machine learning research. Contains de-identified clinical records including demographics, visits, conditions, drug exposures, and procedures.",
+  "url": "https://example.org/datasets/synthetic-omop",
+  "version": "1.0.0",
+  "datePublished": "2025-12-01",
+  "dateCreated": "2025-11-01",
+  "dateModified": "2025-12-01",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "creator": [
+    {
+      "@type": "Organization",
+      "name": "Example Medical Research Center",
+      "url": "https://example.org"
+    }
+  ],
+  "keywords": [
+    "healthcare",
+    "clinical data",
+    "OMOP CDM",
+    "synthetic data",
+    "observational health",
+    "EHR"
+  ],
+  "bio:dataCategory": ["clinical", "synthetic"],
+  "bio:deidentificationMethod": "Synthea Synthetic Data Generation",
+  "bio:cohortDescription": "Synthetic cohort of 10,000 patients with diverse conditions including diabetes, hypertension, and cardiovascular disease. Age range 18-90 years.",
+  "bio:clinicalStudyType": "observational",
+  "bio:authenticatedAccess": false,
+  "omop:cdmVersion": "5.4",
+  "omop:cdmSourceName": "Synthetic_OMOP_Example",
+  "omop:vocabularyVersion": "2024-10-01",
+  "omop:databaseDialect": "postgresql",
+  "bio:qualityMetrics": {
+    "bio:completeness": {
+      "overall": 0.95,
+      "PERSON": 1.0,
+      "VISIT_OCCURRENCE": 0.98,
+      "CONDITION_OCCURRENCE": 0.92,
+      "DRUG_EXPOSURE": 0.94
+    }
+  },
+  "bioschemas:taxonomicRange": "http://purl.obolibrary.org/obo/NCBITaxon_9606",
+  "citeAs": "@misc{synthetic_omop_2025, title={Synthetic OMOP CDM Dataset}, author={Example Medical Research Center}, year={2025}, publisher={Example Repository}}",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "person_csv",
+      "name": "PERSON table",
+      "contentUrl": "https://example.org/data/person.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "abc1234567890abcdef1234567890abcdef1234567890abcdef123456789abcd",
+      "contentSize": "2.5 MB",
+      "description": "OMOP PERSON table containing demographic information"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "visit_occurrence_csv",
+      "name": "VISIT_OCCURRENCE table",
+      "contentUrl": "https://example.org/data/visit_occurrence.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "def4567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "contentSize": "15.2 MB",
+      "description": "OMOP VISIT_OCCURRENCE table with patient visit records"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "condition_occurrence_csv",
+      "name": "CONDITION_OCCURRENCE table",
+      "contentUrl": "https://example.org/data/condition_occurrence.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "contentSize": "25.8 MB",
+      "description": "OMOP CONDITION_OCCURRENCE table with diagnosis records"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "drug_exposure_csv",
+      "name": "DRUG_EXPOSURE table",
+      "contentUrl": "https://example.org/data/drug_exposure.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba",
+      "contentSize": "42.1 MB",
+      "description": "OMOP DRUG_EXPOSURE table with medication records"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "concept_csv",
+      "name": "CONCEPT table",
+      "contentUrl": "https://example.org/data/concept.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+      "contentSize": "150.5 MB",
+      "description": "OMOP CONCEPT vocabulary table"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "person",
+      "name": "PERSON",
+      "description": "Demographics and basic patient information per OMOP CDM PERSON table",
+      "omop:cdmTable": "PERSON",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+      "key": [{ "@id": "person/person_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "person/person_id",
+          "name": "person_id",
+          "description": "Unique identifier for each person",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "person_id",
+          "omop:isRequired": true,
+          "omop:isPrimaryKey": true,
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "person_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/gender_concept_id",
+          "name": "gender_concept_id",
+          "description": "Standard concept for biological sex at birth",
+          "dataType": "bio:ConceptID",
+          "omop:cdmField": "gender_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:foreignKeyField": "concept_id",
+          "omop:conceptDomain": "Gender",
+          "bio:vocabulary": "OMOP Gender",
+          "references": { "@id": "concept/concept_id" },
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "gender_concept_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/year_of_birth",
+          "name": "year_of_birth",
+          "description": "Year of birth (synthetic)",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "year_of_birth",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "year_of_birth" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/race_concept_id",
+          "name": "race_concept_id",
+          "description": "Standard concept for race",
+          "dataType": "bio:ConceptID",
+          "omop:cdmField": "race_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:conceptDomain": "Race",
+          "bio:vocabulary": "OMOP Race",
+          "references": { "@id": "concept/concept_id" },
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "race_concept_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/ethnicity_concept_id",
+          "name": "ethnicity_concept_id",
+          "description": "Standard concept for ethnicity (Hispanic/Not Hispanic)",
+          "dataType": "bio:ConceptID",
+          "omop:cdmField": "ethnicity_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:conceptDomain": "Ethnicity",
+          "bio:vocabulary": "OMOP Ethnicity",
+          "references": { "@id": "concept/concept_id" },
+          "source": {
+            "fileObject": { "@id": "person_csv" },
+            "extract": { "column": "ethnicity_concept_id" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "condition_occurrence",
+      "name": "CONDITION_OCCURRENCE",
+      "description": "Patient condition diagnoses per OMOP CDM CONDITION_OCCURRENCE table",
+      "omop:cdmTable": "CONDITION_OCCURRENCE",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+      "key": [{ "@id": "condition_occurrence/condition_occurrence_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_occurrence_id",
+          "name": "condition_occurrence_id",
+          "description": "Unique identifier for condition record",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "condition_occurrence_id",
+          "omop:isPrimaryKey": true,
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_occurrence_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/person_id",
+          "name": "person_id",
+          "description": "Foreign key to PERSON",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "person_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "PERSON",
+          "omop:foreignKeyField": "person_id",
+          "references": { "@id": "person/person_id" },
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "person_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_concept_id",
+          "name": "condition_concept_id",
+          "description": "Standard SNOMED concept for the condition",
+          "dataType": "bio:ConceptID",
+          "omop:cdmField": "condition_concept_id",
+          "omop:isRequired": true,
+          "omop:foreignKeyTable": "CONCEPT",
+          "omop:conceptDomain": "Condition",
+          "bio:vocabulary": "SNOMED CT",
+          "references": { "@id": "concept/concept_id" },
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_concept_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_start_date",
+          "name": "condition_start_date",
+          "description": "Start date of condition (synthetic)",
+          "dataType": "sc:Date",
+          "omop:cdmField": "condition_start_date",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "condition_start_date" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/visit_occurrence_id",
+          "name": "visit_occurrence_id",
+          "description": "Foreign key to VISIT_OCCURRENCE",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "visit_occurrence_id",
+          "omop:foreignKeyTable": "VISIT_OCCURRENCE",
+          "omop:foreignKeyField": "visit_occurrence_id",
+          "references": { "@id": "visit_occurrence/visit_occurrence_id" },
+          "source": {
+            "fileObject": { "@id": "condition_occurrence_csv" },
+            "extract": { "column": "visit_occurrence_id" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "concept",
+      "name": "CONCEPT",
+      "description": "Standard vocabulary concepts per OMOP CDM CONCEPT table",
+      "omop:cdmTable": "CONCEPT",
+      "omop:tableDomain": "Vocabulary",
+      "omop:distributionKey": "RANDOM",
+      "key": [{ "@id": "concept/concept_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "concept/concept_id",
+          "name": "concept_id",
+          "description": "Unique identifier for vocabulary concept",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "concept_id",
+          "omop:isPrimaryKey": true,
+          "source": {
+            "fileObject": { "@id": "concept_csv" },
+            "extract": { "column": "concept_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "concept/concept_name",
+          "name": "concept_name",
+          "description": "Name or description of the concept",
+          "dataType": "sc:Text",
+          "omop:cdmField": "concept_name",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "concept_csv" },
+            "extract": { "column": "concept_name" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "concept/domain_id",
+          "name": "domain_id",
+          "description": "Domain that the concept belongs to",
+          "dataType": "sc:Text",
+          "omop:cdmField": "domain_id",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "concept_csv" },
+            "extract": { "column": "domain_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "concept/vocabulary_id",
+          "name": "vocabulary_id",
+          "description": "Source vocabulary (e.g., SNOMED, RxNorm)",
+          "dataType": "sc:Text",
+          "omop:cdmField": "vocabulary_id",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "concept_csv" },
+            "extract": { "column": "vocabulary_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "concept/concept_code",
+          "name": "concept_code",
+          "description": "Concept code in source vocabulary",
+          "dataType": "sc:Text",
+          "omop:cdmField": "concept_code",
+          "omop:isRequired": true,
+          "source": {
+            "fileObject": { "@id": "concept_csv" },
+            "extract": { "column": "concept_code" }
+          }
+        }
+      ]
+    }
+  ]
+}

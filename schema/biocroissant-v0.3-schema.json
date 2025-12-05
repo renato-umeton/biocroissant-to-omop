@@ -1,0 +1,549 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://mlcommons.org/croissant/bio/0.3/schema",
+  "title": "Bio-Croissant Dataset Schema v0.3",
+  "description": "JSON Schema for Bio-Croissant metadata format v0.3 with ISO 11179 metadata registry support",
+  "type": "object",
+  "required": ["@context", "@type", "dct:conformsTo", "name", "description", "license"],
+
+  "properties": {
+    "@context": {
+      "description": "JSON-LD context",
+      "oneOf": [
+        { "type": "object" },
+        { "type": "array" },
+        { "type": "string", "format": "uri" }
+      ]
+    },
+    "@type": {
+      "description": "RDF type(s)",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      ]
+    },
+    "dct:conformsTo": {
+      "description": "Standards this dataset conforms to",
+      "type": "array",
+      "contains": {
+        "type": "string",
+        "pattern": "^http://mlcommons\\.org/croissant/bio/0\\.3"
+      },
+      "minItems": 2
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 10 },
+    "license": {
+      "oneOf": [
+        { "type": "string", "format": "uri" },
+        { "type": "string", "pattern": "^[A-Z0-9-]+$" }
+      ]
+    },
+
+    "bio:conformanceLevel": {
+      "type": "string",
+      "enum": ["Level 1", "Level 2", "Level 3"]
+    },
+    "bio:extensions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["omop", "bioimaging", "wsi", "genomics", "proteomics"]
+      },
+      "uniqueItems": true
+    },
+    "bio:dataCategory": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "clinical",
+          "imaging",
+          "omics",
+          "pathology",
+          "cellular",
+          "molecular",
+          "animal",
+          "synthetic",
+          "human",
+          "patient"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "bio:deidentificationMethod": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bio:cohortDescription": {
+      "type": "string",
+      "minLength": 10
+    },
+    "bio:clinicalStudyType": {
+      "type": "string",
+      "enum": ["observational", "interventional", "registry", "case-control", "cohort", "cross-sectional"]
+    },
+    "bio:specimenType": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "bio:assayType": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "bio:authenticatedAccess": {
+      "type": "boolean"
+    },
+    "bio:accessControlMechanism": {
+      "type": "string"
+    },
+    "bio:accessControlEndpoint": {
+      "type": "string",
+      "format": "uri"
+    },
+    "bio:dataUseOntology": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^http://purl\\.obolibrary\\.org/obo/DUO_"
+      }
+    },
+    "bio:qualityMetrics": {
+      "type": "object",
+      "properties": {
+        "bio:completeness": {
+          "type": "object",
+          "properties": {
+            "overall": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      }
+    },
+
+    "iso11179:registrationAuthority": {
+      "$ref": "#/$defs/Organization"
+    },
+    "iso11179:registrationStatus": {
+      "type": "string",
+      "enum": ["draft", "candidate", "standard", "preferred", "deprecated", "retired"]
+    },
+    "iso11179:steward": {
+      "oneOf": [
+        { "$ref": "#/$defs/Person" },
+        { "$ref": "#/$defs/Organization" }
+      ]
+    },
+    "iso11179:submitter": {
+      "oneOf": [
+        { "$ref": "#/$defs/Person" },
+        { "$ref": "#/$defs/Organization" }
+      ]
+    },
+    "iso11179:registeredDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "iso11179:lastReviewedDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "iso11179:changeDescription": {
+      "type": "string"
+    },
+
+    "omop:cdmVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+    },
+    "omop:vocabularyVersion": {
+      "type": "string"
+    },
+    "omop:cdmSourceName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "omop:databaseDialect": {
+      "type": "string",
+      "enum": ["postgresql", "sql_server", "oracle", "redshift", "bigquery", "snowflake"]
+    },
+
+    "bioimg:imagingModality": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "bioimg:dimensionality": {
+      "type": "string",
+      "enum": ["2D", "3D", "4D", "5D"]
+    },
+    "bioimg:pixelFormat": {
+      "type": "string",
+      "enum": ["uint8", "uint16", "uint32", "int8", "int16", "int32", "float32", "float64"]
+    },
+
+    "wsi:scannerManufacturer": {
+      "type": "string"
+    },
+    "wsi:scannerModel": {
+      "type": "string"
+    },
+    "wsi:magnification": {
+      "type": "number",
+      "minimum": 1
+    },
+    "wsi:stainType": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+
+    "recordSet": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RecordSet"
+      }
+    },
+    "distribution": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/FileObject" },
+          { "$ref": "#/$defs/FileSet" }
+        ]
+      }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "bio:dataCategory": {
+            "contains": {
+              "enum": ["clinical", "patient", "human"]
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["bio:deidentificationMethod"],
+        "properties": {
+          "bio:deidentificationMethod": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bio:authenticatedAccess": { "const": true }
+        }
+      },
+      "then": {
+        "required": ["bio:accessControlMechanism"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bio:extensions": {
+            "contains": { "const": "omop" }
+          }
+        }
+      },
+      "then": {
+        "required": ["omop:cdmVersion", "omop:vocabularyVersion", "omop:cdmSourceName"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bio:extensions": {
+            "contains": { "const": "bioimaging" }
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          { "required": ["bioimg:imagingModality"] },
+          { "required": ["bioimg:dimensionality"] }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bio:extensions": {
+            "contains": { "const": "wsi" }
+          }
+        }
+      },
+      "then": {
+        "required": ["wsi:scannerManufacturer", "wsi:magnification"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bio:conformanceLevel": { "enum": ["Level 2", "Level 3"] }
+        }
+      },
+      "then": {
+        "required": ["iso11179:steward", "iso11179:registrationStatus"]
+      }
+    }
+  ],
+
+  "$defs": {
+    "Person": {
+      "type": "object",
+      "required": ["@type", "name"],
+      "properties": {
+        "@type": { "const": "sc:Person" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "affiliation": { "$ref": "#/$defs/Organization" }
+      }
+    },
+
+    "Organization": {
+      "type": "object",
+      "required": ["@type", "name"],
+      "properties": {
+        "@type": { "const": "sc:Organization" },
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+
+    "DataElementConcept": {
+      "type": "object",
+      "required": ["@id", "iso11179:objectClass", "iso11179:property", "iso11179:definition"],
+      "properties": {
+        "@id": { "type": "string" },
+        "iso11179:objectClass": { "type": "string" },
+        "iso11179:property": { "type": "string" },
+        "iso11179:definition": { "type": "string", "minLength": 10 },
+        "iso11179:conceptualDomain": {
+          "type": "object",
+          "properties": {
+            "@id": { "type": "string" }
+          }
+        },
+        "iso11179:classificationScheme": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "ValueDomain": {
+      "type": "object",
+      "required": ["@id", "iso11179:datatype"],
+      "properties": {
+        "@id": { "type": "string" },
+        "iso11179:datatype": { "type": "string" },
+        "iso11179:unitOfMeasure": { "type": "string" },
+        "iso11179:format": { "type": "string" },
+        "iso11179:maximumLength": { "type": "integer", "minimum": 1 },
+        "iso11179:minimumValue": { "type": "number" },
+        "iso11179:maximumValue": { "type": "number" },
+        "iso11179:permissibleValues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PermissibleValue" }
+        },
+        "iso11179:conceptualDomain": {
+          "type": "object",
+          "properties": {
+            "@id": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "PermissibleValue": {
+      "type": "object",
+      "required": ["value", "meaning"],
+      "properties": {
+        "value": {},
+        "meaning": { "type": "string" },
+        "iso11179:valueMeaningId": { "type": "string" },
+        "beginDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" }
+      }
+    },
+
+    "RecordSet": {
+      "type": "object",
+      "required": ["@type", "@id", "field"],
+      "properties": {
+        "@type": { "const": "cr:RecordSet" },
+        "@id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "bio:recordType": { "type": "string" },
+        "omop:cdmTable": { "type": "string" },
+        "omop:tableDomain": {
+          "type": "string",
+          "enum": ["Clinical", "Vocabulary", "Health Economics", "Derived", "System", "Analysis"]
+        },
+        "omop:distributionKey": { "type": "string" },
+        "iso11179:classifiedBy": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@id": { "type": "string" }
+            }
+          }
+        },
+        "field": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Field" },
+          "minItems": 1
+        },
+        "key": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@id": { "type": "string" }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "omop:cdmTable": { "type": "string" }
+            },
+            "required": ["omop:cdmTable"]
+          },
+          "then": {
+            "required": ["omop:tableDomain"]
+          }
+        }
+      ]
+    },
+
+    "Field": {
+      "type": "object",
+      "required": ["@type", "@id", "dataType"],
+      "properties": {
+        "@type": { "const": "cr:Field" },
+        "@id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "dataType": { "type": "string" },
+        "bio:semanticType": { "type": "string" },
+        "bio:vocabulary": { "type": "string" },
+        "bio:vocabularyVersion": { "type": "string" },
+        "bio:deidentificationNote": { "type": "string" },
+        "bio:unit": { "type": "string" },
+        "omop:cdmField": { "type": "string" },
+        "omop:isRequired": { "type": "boolean" },
+        "omop:isPrimaryKey": { "type": "boolean" },
+        "omop:isForeignKey": { "type": "boolean" },
+        "omop:foreignKeyTable": { "type": "string" },
+        "omop:foreignKeyField": { "type": "string" },
+        "omop:conceptDomain": { "type": "string" },
+        "bioimg:dimensions": { "type": "object" },
+        "bioimg:dimensionOrder": { "type": "string" },
+        "bioimg:physicalSizeX": { "type": "number" },
+        "bioimg:physicalSizeY": { "type": "number" },
+        "bioimg:physicalSizeZ": { "type": "number" },
+        "bioimg:channelNames": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "wsi:pyramidLevels": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "wsi:baseMagnification": { "type": "number" },
+        "wsi:mppX": { "type": "number", "minimum": 0 },
+        "wsi:mppY": { "type": "number", "minimum": 0 },
+        "iso11179:dataElementConcept": { "$ref": "#/$defs/DataElementConcept" },
+        "iso11179:valueDomain": { "$ref": "#/$defs/ValueDomain" },
+        "iso11179:classifiedBy": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@id": { "type": "string" }
+            }
+          }
+        },
+        "source": { "type": "object" },
+        "references": {
+          "type": "object",
+          "properties": {
+            "@id": { "type": "string" }
+          }
+        },
+        "repeated": { "type": "boolean" },
+        "subField": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Field" }
+        }
+      }
+    },
+
+    "FileObject": {
+      "type": "object",
+      "required": ["@type", "@id", "contentUrl", "encodingFormat"],
+      "additionalProperties": true,
+      "properties": {
+        "@type": { "const": "cr:FileObject" },
+        "@id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "contentUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "encodingFormat": { "type": "string" },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "contentSize": { "type": "string" },
+        "bioimg:omeZarrVersion": { "type": "string" },
+        "bioimg:pyramidLevels": { "type": "integer" },
+        "wsi:compressionFormat": { "type": "string" }
+      }
+    },
+
+    "FileSet": {
+      "type": "object",
+      "required": ["@type", "@id", "encodingFormat"],
+      "additionalProperties": true,
+      "properties": {
+        "@type": { "const": "cr:FileSet" },
+        "@id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "encodingFormat": { "type": "string" },
+        "containedIn": {
+          "type": "object",
+          "properties": {
+            "@id": { "type": "string" }
+          }
+        },
+        "includes": { "type": "string" },
+        "bioimg:omeZarrVersion": { "type": "string" },
+        "wsi:compressionFormat": { "type": "string" }
+      }
+    }
+  }
+}

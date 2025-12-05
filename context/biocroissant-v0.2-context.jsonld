@@ -1,0 +1,513 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+
+    "bio": "http://mlcommons.org/croissant/bio/0.2/",
+    "omop": "http://mlcommons.org/croissant/bio/omop/0.2/",
+    "bioimg": "http://mlcommons.org/croissant/bio/imaging/0.2/",
+    "wsi": "http://mlcommons.org/croissant/bio/wsi/0.2/",
+    "obo": "http://purl.obolibrary.org/obo/",
+    "bioschemas": "https://bioschemas.org/",
+    "fhir": "http://hl7.org/fhir/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "duo": "http://purl.obolibrary.org/obo/DUO_",
+
+    "conformsTo": "dct:conformsTo",
+
+    "conformanceLevel": {
+      "@id": "bio:conformanceLevel",
+      "@type": "xsd:string"
+    },
+    "extensions": {
+      "@id": "bio:extensions",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "dataCategory": {
+      "@id": "bio:dataCategory",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "deidentificationMethod": {
+      "@id": "bio:deidentificationMethod",
+      "@type": "xsd:string"
+    },
+    "deidentificationNote": {
+      "@id": "bio:deidentificationNote",
+      "@type": "xsd:string"
+    },
+    "cohortDescription": {
+      "@id": "bio:cohortDescription",
+      "@type": "xsd:string"
+    },
+    "clinicalStudyType": {
+      "@id": "bio:clinicalStudyType",
+      "@type": "xsd:string"
+    },
+    "specimenType": {
+      "@id": "bio:specimenType",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "assayType": {
+      "@id": "bio:assayType",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "authenticatedAccess": {
+      "@id": "bio:authenticatedAccess",
+      "@type": "xsd:boolean"
+    },
+    "accessControlMechanism": {
+      "@id": "bio:accessControlMechanism",
+      "@type": "xsd:string"
+    },
+    "accessControlEndpoint": {
+      "@id": "bio:accessControlEndpoint",
+      "@type": "@id"
+    },
+    "dataAccessCommittee": {
+      "@id": "bio:dataAccessCommittee",
+      "@type": "@id"
+    },
+    "dataUseOntology": {
+      "@id": "bio:dataUseOntology",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "dataUseDescription": {
+      "@id": "bio:dataUseDescription",
+      "@type": "xsd:string"
+    },
+    "ethicsApprovalNumber": {
+      "@id": "bio:ethicsApprovalNumber",
+      "@type": "xsd:string"
+    },
+    "vocabulary": {
+      "@id": "bio:vocabulary",
+      "@type": "xsd:string"
+    },
+    "vocabularyVersion": {
+      "@id": "bio:vocabularyVersion",
+      "@type": "xsd:string"
+    },
+    "qualityMetrics": {
+      "@id": "bio:qualityMetrics",
+      "@type": "@id"
+    },
+    "recordType": {
+      "@id": "bio:recordType",
+      "@type": "xsd:string"
+    },
+    "temporalCoverage": {
+      "@id": "bio:temporalCoverage",
+      "@type": "xsd:string"
+    },
+    "semanticType": {
+      "@id": "bio:semanticType",
+      "@type": "@id"
+    },
+    "unit": {
+      "@id": "bio:unit",
+      "@type": "xsd:string"
+    },
+
+    "cdmVersion": {
+      "@id": "omop:cdmVersion",
+      "@type": "xsd:string"
+    },
+    "vocabularyVersions": {
+      "@id": "omop:vocabularyVersions",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "cdmSourceName": {
+      "@id": "omop:cdmSourceName",
+      "@type": "xsd:string"
+    },
+    "databaseDialect": {
+      "@id": "omop:databaseDialect",
+      "@type": "xsd:string"
+    },
+    "cdmReleaseDate": {
+      "@id": "omop:cdmReleaseDate",
+      "@type": "xsd:date"
+    },
+    "cdmTable": {
+      "@id": "omop:cdmTable",
+      "@type": "xsd:string"
+    },
+    "tableDomain": {
+      "@id": "omop:tableDomain",
+      "@type": "xsd:string"
+    },
+    "distributionKey": {
+      "@id": "omop:distributionKey",
+      "@type": "xsd:string"
+    },
+    "recordCount": {
+      "@id": "omop:recordCount",
+      "@type": "xsd:integer"
+    },
+    "cdmField": {
+      "@id": "omop:cdmField",
+      "@type": "xsd:string"
+    },
+    "isRequired": {
+      "@id": "omop:isRequired",
+      "@type": "xsd:boolean"
+    },
+    "isPrimaryKey": {
+      "@id": "omop:isPrimaryKey",
+      "@type": "xsd:boolean"
+    },
+    "isForeignKey": {
+      "@id": "omop:isForeignKey",
+      "@type": "xsd:boolean"
+    },
+    "foreignKeyTable": {
+      "@id": "omop:foreignKeyTable",
+      "@type": "xsd:string"
+    },
+    "foreignKeyField": {
+      "@id": "omop:foreignKeyField",
+      "@type": "xsd:string"
+    },
+    "conceptDomain": {
+      "@id": "omop:conceptDomain",
+      "@type": "xsd:string"
+    },
+    "sqlQuery": {
+      "@id": "omop:sqlQuery",
+      "@type": "xsd:string"
+    },
+    "databaseSchema": {
+      "@id": "omop:databaseSchema",
+      "@type": "xsd:string"
+    },
+    "conceptLookup": {
+      "@id": "omop:conceptLookup",
+      "@type": "@id"
+    },
+
+    "imagingModality": {
+      "@id": "bioimg:imagingModality",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "dimensionality": {
+      "@id": "bioimg:dimensionality",
+      "@type": "xsd:string"
+    },
+    "pixelFormat": {
+      "@id": "bioimg:pixelFormat",
+      "@type": "xsd:string"
+    },
+    "dimensions": {
+      "@id": "bioimg:dimensions",
+      "@type": "@id"
+    },
+    "dimensionOrder": {
+      "@id": "bioimg:dimensionOrder",
+      "@type": "xsd:string"
+    },
+    "physicalSizeX": {
+      "@id": "bioimg:physicalSizeX",
+      "@type": "xsd:float"
+    },
+    "physicalSizeY": {
+      "@id": "bioimg:physicalSizeY",
+      "@type": "xsd:float"
+    },
+    "physicalSizeZ": {
+      "@id": "bioimg:physicalSizeZ",
+      "@type": "xsd:float"
+    },
+    "physicalSizeUnit": {
+      "@id": "bioimg:physicalSizeUnit",
+      "@type": "xsd:string"
+    },
+    "timeIncrement": {
+      "@id": "bioimg:timeIncrement",
+      "@type": "xsd:float"
+    },
+    "timeUnit": {
+      "@id": "bioimg:timeUnit",
+      "@type": "xsd:string"
+    },
+    "channelNames": {
+      "@id": "bioimg:channelNames",
+      "@type": "xsd:string",
+      "@container": "@list"
+    },
+    "channelColors": {
+      "@id": "bioimg:channelColors",
+      "@type": "xsd:string",
+      "@container": "@list"
+    },
+    "channelExcitationWavelength": {
+      "@id": "bioimg:channelExcitationWavelength",
+      "@type": "xsd:float",
+      "@container": "@list"
+    },
+    "channelEmissionWavelength": {
+      "@id": "bioimg:channelEmissionWavelength",
+      "@type": "xsd:float",
+      "@container": "@list"
+    },
+    "channelIlluminationType": {
+      "@id": "bioimg:channelIlluminationType",
+      "@type": "xsd:string",
+      "@container": "@list"
+    },
+    "objectiveLens": {
+      "@id": "bioimg:objectiveLens",
+      "@type": "@id"
+    },
+    "microscopeManufacturer": {
+      "@id": "bioimg:microscopeManufacturer",
+      "@type": "xsd:string"
+    },
+    "microscopeModel": {
+      "@id": "bioimg:microscopeModel",
+      "@type": "xsd:string"
+    },
+    "acquisitionSoftware": {
+      "@id": "bioimg:acquisitionSoftware",
+      "@type": "xsd:string"
+    },
+    "acquisitionDate": {
+      "@id": "bioimg:acquisitionDate",
+      "@type": "xsd:dateTime"
+    },
+    "omeFormat": {
+      "@id": "bioimg:omeFormat",
+      "@type": "xsd:string"
+    },
+    "omeZarrVersion": {
+      "@id": "bioimg:omeZarrVersion",
+      "@type": "xsd:string"
+    },
+    "pyramidLevels": {
+      "@id": "bioimg:pyramidLevels",
+      "@type": "xsd:integer"
+    },
+    "chunkSize": {
+      "@id": "bioimg:chunkSize",
+      "@type": "xsd:integer",
+      "@container": "@list"
+    },
+    "compressionCodec": {
+      "@id": "bioimg:compressionCodec",
+      "@type": "xsd:string"
+    },
+    "omeXmlReference": {
+      "@id": "bioimg:omeXmlReference",
+      "@type": "@id"
+    },
+    "omeXmlVersion": {
+      "@id": "bioimg:omeXmlVersion",
+      "@type": "xsd:string"
+    },
+    "omeXmlIntegration": {
+      "@id": "bioimg:omeXmlIntegration",
+      "@type": "xsd:string"
+    },
+    "zarrPath": {
+      "@id": "bioimg:zarrPath",
+      "@type": "xsd:string"
+    },
+    "zarrResolution": {
+      "@id": "bioimg:zarrResolution",
+      "@type": "xsd:integer"
+    },
+    "hdf5Path": {
+      "@id": "bioimg:hdf5Path",
+      "@type": "xsd:string"
+    },
+    "tiffPattern": {
+      "@id": "bioimg:tiffPattern",
+      "@type": "xsd:string"
+    },
+    "dimensionMapping": {
+      "@id": "bioimg:dimensionMapping",
+      "@type": "@id"
+    },
+    "roiType": {
+      "@id": "bioimg:roiType",
+      "@type": "xsd:string"
+    },
+    "roiFormat": {
+      "@id": "bioimg:roiFormat",
+      "@type": "xsd:string"
+    },
+    "coordinateSystem": {
+      "@id": "bioimg:coordinateSystem",
+      "@type": "xsd:string"
+    },
+    "referenceFrame": {
+      "@id": "bioimg:referenceFrame",
+      "@type": "@id"
+    },
+    "maskType": {
+      "@id": "bioimg:maskType",
+      "@type": "xsd:string"
+    },
+    "backgroundLabel": {
+      "@id": "bioimg:backgroundLabel",
+      "@type": "xsd:integer"
+    },
+    "labelSemantics": {
+      "@id": "bioimg:labelSemantics",
+      "@type": "xsd:string"
+    },
+
+    "scannerManufacturer": {
+      "@id": "wsi:scannerManufacturer",
+      "@type": "xsd:string"
+    },
+    "scannerModel": {
+      "@id": "wsi:scannerModel",
+      "@type": "xsd:string"
+    },
+    "magnification": {
+      "@id": "wsi:magnification",
+      "@type": "xsd:float"
+    },
+    "tissueType": {
+      "@id": "wsi:tissueType",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "stainType": {
+      "@id": "wsi:stainType",
+      "@type": "xsd:string",
+      "@container": "@set"
+    },
+    "preparationType": {
+      "@id": "wsi:preparationType",
+      "@type": "xsd:string"
+    },
+    "baseMagnification": {
+      "@id": "wsi:baseMagnification",
+      "@type": "xsd:float"
+    },
+    "tileWidth": {
+      "@id": "wsi:tileWidth",
+      "@type": "xsd:integer"
+    },
+    "tileHeight": {
+      "@id": "wsi:tileHeight",
+      "@type": "xsd:integer"
+    },
+    "slideWidth": {
+      "@id": "wsi:slideWidth",
+      "@type": "xsd:integer"
+    },
+    "slideHeight": {
+      "@id": "wsi:slideHeight",
+      "@type": "xsd:integer"
+    },
+    "mppX": {
+      "@id": "wsi:mppX",
+      "@type": "xsd:float"
+    },
+    "mppY": {
+      "@id": "wsi:mppY",
+      "@type": "xsd:float"
+    },
+    "compressionFormat": {
+      "@id": "wsi:compressionFormat",
+      "@type": "xsd:string"
+    },
+    "colorSpace": {
+      "@id": "wsi:colorSpace",
+      "@type": "xsd:string"
+    },
+    "bitsPerSample": {
+      "@id": "wsi:bitsPerSample",
+      "@type": "xsd:integer"
+    },
+    "tileSize": {
+      "@id": "wsi:tileSize",
+      "@type": "xsd:integer"
+    },
+    "overlapPixels": {
+      "@id": "wsi:overlapPixels",
+      "@type": "xsd:integer"
+    },
+    "extractTile": {
+      "@id": "wsi:extractTile",
+      "@type": "@id"
+    },
+    "annotationType": {
+      "@id": "wsi:annotationType",
+      "@type": "xsd:string"
+    },
+    "annotationClass": {
+      "@id": "wsi:annotationClass",
+      "@type": "xsd:string"
+    },
+    "annotator": {
+      "@id": "wsi:annotator",
+      "@type": "@id"
+    },
+    "annotationDate": {
+      "@id": "wsi:annotationDate",
+      "@type": "xsd:date"
+    },
+
+    "fhirServer": {
+      "@id": "bio:fhirServer",
+      "@type": "@id"
+    },
+    "fhirVersion": {
+      "@id": "bio:fhirVersion",
+      "@type": "xsd:string"
+    },
+    "relatedResources": {
+      "@id": "fhir:relatedResources",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "resourceReference": {
+      "@id": "fhir:resourceReference",
+      "@type": "xsd:string"
+    },
+    "conformsToProfile": {
+      "@id": "fhir:conformsToProfile",
+      "@type": "@id"
+    },
+    "mapsToElement": {
+      "@id": "fhir:mapsToElement",
+      "@type": "xsd:string"
+    },
+    "linkageMethod": {
+      "@id": "bio:linkageMethod",
+      "@type": "xsd:string"
+    },
+    "included": {
+      "@id": "bio:included",
+      "@type": "xsd:boolean"
+    },
+    "availableOnRequest": {
+      "@id": "bio:availableOnRequest",
+      "@type": "xsd:boolean"
+    },
+
+    "transformationsPipeline": {
+      "@id": "bio:transformationsPipeline",
+      "@type": "@id",
+      "@container": "@list"
+    }
+  }
+}

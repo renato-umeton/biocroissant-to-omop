@@ -1,0 +1,357 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "bio": "http://mlcommons.org/croissant/bio/0.2/",
+    "bioimg": "http://mlcommons.org/croissant/bio/imaging/0.2/",
+    "bioschemas": "https://bioschemas.org/",
+    "obo": "http://purl.obolibrary.org/obo/"
+  },
+  "@type": ["sc:Dataset", "bioschemas:Dataset"],
+  "dct:conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/bio/0.2"
+  ],
+  "bio:conformanceLevel": "Level 2",
+  "bio:extensions": ["bioimaging"],
+  "name": "High-Content Screening Cell Imaging Dataset",
+  "description": "Multi-channel fluorescence microscopy images of HeLa cells treated with various compounds. Images are stored in OME-Zarr format with 5D structure (TCZYX). Includes automated segmentation masks and cell measurements.",
+  "url": "https://example.org/datasets/hcs-imaging",
+  "version": "2.1.0",
+  "datePublished": "2025-11-15",
+  "dateCreated": "2025-09-01",
+  "dateModified": "2025-11-15",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": [
+    {
+      "@type": "Organization",
+      "name": "Cellular Imaging Research Lab",
+      "url": "https://example.org/imaging-lab"
+    }
+  ],
+  "keywords": [
+    "microscopy",
+    "fluorescence imaging",
+    "high-content screening",
+    "cell biology",
+    "OME-Zarr",
+    "image segmentation"
+  ],
+  "bio:dataCategory": ["imaging", "cellular"],
+  "bio:specimenType": ["cell line"],
+  "bio:assayType": ["fluorescence microscopy", "high-content screening"],
+  "bio:authenticatedAccess": false,
+  "bioimg:imagingModality": ["fluorescence", "confocal"],
+  "bioimg:dimensionality": "5D",
+  "bioimg:pixelFormat": "uint16",
+  "bioimg:omeFormat": "ome-zarr",
+  "bioimg:omeZarrVersion": "0.4",
+  "bio:qualityMetrics": {
+    "bio:completeness": {
+      "overall": 0.98
+    },
+    "bioimg:snr": 12.5,
+    "bioimg:imageCount": 384,
+    "bioimg:cellCount": 52480
+  },
+  "bioschemas:taxonomicRange": "http://purl.obolibrary.org/obo/NCBITaxon_9606",
+  "bioschemas:measurementTechnique": "http://purl.obolibrary.org/obo/OBI_0302807",
+  "bioschemas:variableMeasured": [
+    "cell morphology",
+    "nuclear area",
+    "fluorescence intensity",
+    "mitotic phase"
+  ],
+  "citeAs": "@article{example2025hcs, title={High-Content Screening Dataset}, author={Example Lab}, journal={Nature Methods}, year={2025}}",
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "zarr_images",
+      "name": "OME-Zarr Image Files",
+      "description": "Collection of OME-Zarr format microscopy images",
+      "encodingFormat": "application/zarr",
+      "containedIn": { "@id": "dataset_root" },
+      "includes": "images/*.zarr",
+      "bioimg:omeZarrVersion": "0.4"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "metadata_csv",
+      "name": "Image Metadata",
+      "contentUrl": "https://example.org/data/image_metadata.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "contentSize": "150 KB",
+      "description": "Per-image metadata including compound treatment, concentration, and timepoint"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "cell_measurements",
+      "name": "Cell Measurements",
+      "contentUrl": "https://example.org/data/cell_measurements.parquet",
+      "encodingFormat": "application/x-parquet",
+      "sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "contentSize": "25 MB",
+      "description": "Single-cell measurements extracted from segmentation"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "segmentation_masks",
+      "name": "Segmentation Masks",
+      "contentUrl": "https://example.org/data/segmentation_masks.zarr",
+      "encodingFormat": "application/zarr",
+      "sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+      "contentSize": "2.1 GB",
+      "description": "Cell and nuclear segmentation masks"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "images",
+      "name": "Microscopy Images",
+      "description": "Multi-channel fluorescence microscopy images with experimental metadata",
+      "key": [{ "@id": "images/image_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "images/image_id",
+          "name": "image_id",
+          "description": "Unique identifier for each image",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "image_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/image_array",
+          "name": "Image Data",
+          "description": "5D microscopy image (TCZYX): 10 timepoints, 4 channels, 50 Z-slices, 1024x1024 pixels",
+          "dataType": "bioimg:MultiDimensionalArray",
+          "bioimg:dimensions": {
+            "T": 10,
+            "C": 4,
+            "Z": 50,
+            "Y": 1024,
+            "X": 1024
+          },
+          "bioimg:dimensionOrder": "TCZYX",
+          "bioimg:pixelFormat": "uint16",
+          "bioimg:physicalSizeX": 0.065,
+          "bioimg:physicalSizeY": 0.065,
+          "bioimg:physicalSizeZ": 0.3,
+          "bioimg:physicalSizeUnit": "micrometer",
+          "bioimg:timeIncrement": 300.0,
+          "bioimg:timeUnit": "second",
+          "bioimg:channelNames": ["DAPI", "FITC-Tubulin", "TRITC-Actin", "Cy5"],
+          "bioimg:channelColors": ["#0000FF", "#00FF00", "#FF0000", "#FF00FF"],
+          "bioimg:channelExcitationWavelength": [405, 488, 561, 640],
+          "bioimg:channelEmissionWavelength": [461, 525, 595, 670],
+          "source": {
+            "fileSet": { "@id": "zarr_images" },
+            "extract": { "bioimg:zarrPath": "/0" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/compound_name",
+          "name": "Compound",
+          "description": "Name of compound treatment",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "compound_name" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/concentration",
+          "name": "Concentration",
+          "description": "Compound concentration in micromolar",
+          "dataType": "sc:Float",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "concentration_um" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/timepoint",
+          "name": "Timepoint",
+          "description": "Time after compound addition (hours)",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "timepoint_hours" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/plate_id",
+          "name": "Plate ID",
+          "description": "Multi-well plate identifier",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "plate_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "images/well_position",
+          "name": "Well Position",
+          "description": "Well position (e.g., A01, B12)",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "well_position" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "segmentation",
+      "name": "Segmentation Masks",
+      "description": "Cell and nuclear segmentation masks corresponding to images",
+      "key": [{ "@id": "segmentation/image_id" }],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "segmentation/image_id",
+          "name": "image_id",
+          "description": "Foreign key to images",
+          "dataType": "sc:Text",
+          "references": { "@id": "images/image_id" },
+          "source": {
+            "fileObject": { "@id": "metadata_csv" },
+            "extract": { "column": "image_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "segmentation/nuclear_mask",
+          "name": "Nuclear Segmentation",
+          "description": "Nuclear segmentation mask (label image)",
+          "dataType": "bioimg:MultiDimensionalArray",
+          "bioimg:dimensions": {
+            "T": 10,
+            "Z": 50,
+            "Y": 1024,
+            "X": 1024
+          },
+          "bioimg:dimensionOrder": "TZYX",
+          "bioimg:pixelFormat": "uint32",
+          "bioimg:maskType": "label",
+          "bioimg:backgroundLabel": 0,
+          "source": {
+            "fileObject": { "@id": "segmentation_masks" },
+            "extract": { "bioimg:zarrPath": "/nuclear" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "segmentation/cell_mask",
+          "name": "Cell Segmentation",
+          "description": "Whole cell segmentation mask (label image)",
+          "dataType": "bioimg:MultiDimensionalArray",
+          "bioimg:dimensions": {
+            "T": 10,
+            "Z": 50,
+            "Y": 1024,
+            "X": 1024
+          },
+          "bioimg:dimensionOrder": "TZYX",
+          "bioimg:pixelFormat": "uint32",
+          "bioimg:maskType": "label",
+          "bioimg:backgroundLabel": 0,
+          "source": {
+            "fileObject": { "@id": "segmentation_masks" },
+            "extract": { "bioimg:zarrPath": "/cell" }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "cells",
+      "name": "Single Cell Measurements",
+      "description": "Quantitative measurements for each segmented cell",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "cells/image_id",
+          "name": "image_id",
+          "description": "Foreign key to images",
+          "dataType": "sc:Text",
+          "references": { "@id": "images/image_id" },
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "image_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cells/cell_id",
+          "name": "cell_id",
+          "description": "Cell identifier within image",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "cell_id" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cells/nuclear_area",
+          "name": "Nuclear Area",
+          "description": "Nuclear area in square micrometers",
+          "dataType": "sc:Float",
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "nuclear_area_um2" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cells/cell_area",
+          "name": "Cell Area",
+          "description": "Whole cell area in square micrometers",
+          "dataType": "sc:Float",
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "cell_area_um2" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cells/dapi_intensity",
+          "name": "DAPI Mean Intensity",
+          "description": "Mean DAPI fluorescence intensity",
+          "dataType": "sc:Float",
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "dapi_mean_intensity" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cells/mitotic_phase",
+          "name": "Mitotic Phase",
+          "description": "Classified mitotic phase",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": { "@id": "cell_measurements" },
+            "extract": { "column": "mitotic_phase" }
+          }
+        }
+      ]
+    }
+  ]
+}

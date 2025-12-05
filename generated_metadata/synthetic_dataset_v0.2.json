@@ -1,0 +1,224 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "dct": "http://purl.org/dc/terms/",
+    "bio": "http://mlcommons.org/croissant/bio/0.2/",
+    "omop": "http://mlcommons.org/croissant/bio/omop/0.2/"
+  },
+  "@type": [
+    "sc:Dataset",
+    "bioschemas:Dataset"
+  ],
+  "dct:conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/bio/0.2"
+  ],
+  "name": "Synthetically Generated OMOP CDM Dataset - v0.2",
+  "description": "Automatically generated synthetic OMOP CDM v5.4 dataset with 1000 patients and 3043 condition occurrences. Generated using Faker library on 2025-12-04.",
+  "url": "file:////Users/rumeton/workspace/biocromop/generated_data",
+  "version": "1.0.0",
+  "datePublished": "2025-12-04",
+  "dateCreated": "2025-12-04",
+  "dateModified": "2025-12-04",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "creator": [
+    {
+      "@type": "Person",
+      "name": "Bio-Croissant Synthetic Data Generator",
+      "email": "generated@example.org"
+    }
+  ],
+  "keywords": [
+    "synthetic data",
+    "OMOP CDM",
+    "clinical data",
+    "machine learning",
+    "automated generation"
+  ],
+  "bio:conformanceLevel": "Level 1",
+  "bio:extensions": [
+    "omop"
+  ],
+  "bio:dataCategory": [
+    "clinical",
+    "synthetic"
+  ],
+  "bio:deidentificationMethod": "Synthetic",
+  "bio:cohortDescription": "Synthetically generated cohort of 1000 patients with ages ranging from 18 to 90 years. Each patient has between 1-5 condition diagnoses.",
+  "bio:clinicalStudyType": "observational",
+  "bio:authenticatedAccess": false,
+  "omop:cdmVersion": "5.4",
+  "omop:cdmSourceName": "Synthetic_Auto_Generated",
+  "omop:vocabularyVersion": "2024-10-01",
+  "omop:databaseDialect": "postgresql",
+  "bio:qualityMetrics": {
+    "bio:completeness": {
+      "overall": 1.0,
+      "PERSON": 1.0,
+      "CONDITION_OCCURRENCE": 1.0
+    }
+  },
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "person_csv",
+      "name": "PERSON table",
+      "contentUrl": "generated_data/person.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "ecc7d174a7d0c5a231bc22babda6bcd8e8a20d333dbe91661effa4d357f07b6a",
+      "contentSize": "32945 bytes",
+      "description": "OMOP PERSON table with synthetic demographic data"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "condition_csv",
+      "name": "CONDITION_OCCURRENCE table",
+      "contentUrl": "generated_data/condition_occurrence.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "8abdd76890ed75465713e74941ddfc237ab1aca8f4dd0aa9237500511c264d47",
+      "contentSize": "99299 bytes",
+      "description": "OMOP CONDITION_OCCURRENCE table with synthetic diagnosis records"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "person",
+      "name": "PERSON",
+      "description": "Synthetic patient demographics per OMOP CDM PERSON table",
+      "omop:cdmTable": "PERSON",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+      "key": [
+        {
+          "@id": "person/person_id"
+        }
+      ],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "person/person_id",
+          "name": "person_id",
+          "description": "Unique identifier for each person",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "person_id",
+          "omop:isPrimaryKey": true,
+          "source": {
+            "fileObject": {
+              "@id": "person_csv"
+            },
+            "extract": {
+              "column": "person_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/gender_concept_id",
+          "name": "gender_concept_id",
+          "description": "OMOP concept for gender",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "gender_concept_id",
+          "omop:conceptDomain": "Gender",
+          "source": {
+            "fileObject": {
+              "@id": "person_csv"
+            },
+            "extract": {
+              "column": "gender_concept_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "person/year_of_birth",
+          "name": "year_of_birth",
+          "description": "Year of birth (synthetic)",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "year_of_birth",
+          "source": {
+            "fileObject": {
+              "@id": "person_csv"
+            },
+            "extract": {
+              "column": "year_of_birth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "condition_occurrence",
+      "name": "CONDITION_OCCURRENCE",
+      "description": "Synthetic condition diagnoses per OMOP CDM",
+      "omop:cdmTable": "CONDITION_OCCURRENCE",
+      "omop:tableDomain": "Clinical",
+      "omop:distributionKey": "person_id",
+      "key": [
+        {
+          "@id": "condition_occurrence/condition_occurrence_id"
+        }
+      ],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_occurrence_id",
+          "name": "condition_occurrence_id",
+          "description": "Unique identifier for condition record",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "condition_occurrence_id",
+          "omop:isPrimaryKey": true,
+          "source": {
+            "fileObject": {
+              "@id": "condition_csv"
+            },
+            "extract": {
+              "column": "condition_occurrence_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/person_id",
+          "name": "person_id",
+          "description": "Foreign key to PERSON",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "person_id",
+          "omop:foreignKeyTable": "PERSON",
+          "references": {
+            "@id": "person/person_id"
+          },
+          "source": {
+            "fileObject": {
+              "@id": "condition_csv"
+            },
+            "extract": {
+              "column": "person_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "condition_occurrence/condition_concept_id",
+          "name": "condition_concept_id",
+          "description": "SNOMED concept for condition",
+          "dataType": "sc:Integer",
+          "omop:cdmField": "condition_concept_id",
+          "omop:conceptDomain": "Condition",
+          "source": {
+            "fileObject": {
+              "@id": "condition_csv"
+            },
+            "extract": {
+              "column": "condition_concept_id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
