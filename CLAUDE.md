@@ -12,54 +12,63 @@ This project bridges two important healthcare/ML standards:
 
 ## Key Resources in This Repository
 
-### OMOP CDM v5.4 Database Schema Files
+### Project Structure
 
-- `OMOPCDM_sql_server_5.4_ddl.sql` - SQL Server DDL (Data Definition Language) for creating OMOP CDM v5.4 tables
-- `OMOPCDM_sql_server_5.4_primary_keys.sql` - Primary key constraints
-- `OMOPCDM_sql_server_5.4_indices.sql` - Index definitions
-- `OMOPCDM_sql_server_5.4_constraints.sql` - Foreign key and other constraints
+```
+biocromop/
+├── src/                    # Source code
+│   ├── biocroissant_to_omop.py      # Bio-Croissant → OMOP CDM converter
+│   └── generate_synthetic_dataset.py # Synthetic OMOP data generator
+├── tests/                  # Test suite (16 tests, 100% passing)
+├── scripts/                # Validation utilities
+├── docs/                   # Documentation
+│   ├── specifications/     # Bio-Croissant specs (v0.1, v0.2, v0.3)
+│   ├── guides/            # Implementation guides
+│   ├── examples/          # Bio-Croissant example files
+│   ├── Croissant specs 1.0/    # MLCommons Croissant reference specs
+│   └── OMOP CDM specs 5.4/     # OMOP CDM reference documentation
+├── data/                   # Generated synthetic data and metadata
+├── schema/                 # JSON-LD contexts, JSON Schemas, value domains
+└── README.md              # Project documentation
+```
 
-### OMOP CDM Metadata
+### Bio-Croissant Specifications
 
-- `OMOP_CDMv5.4_Field_Level.csv` - Complete field-level documentation for all OMOP CDM tables including:
-  - Field names, data types, and requirements
-  - User guidance and ETL conventions
-  - Primary/foreign key relationships
-  - Accepted concept domains
-- `OMOP_CDM_Oncology_Ex_Table_Level.csv` - Oncology extension table metadata
-- `OMOP_CDM_Oncology_Ex_Field_Level.csv` - Oncology extension field metadata
-
-### Croissant Format Documentation
-
-- `Croissant Format Specification _ Croissant site.html` - Full Croissant format specification
-- `Croissant RAI Specification _ Croissant site.html` - Responsible AI extensions for Croissant
-
-### OMOP CDM Documentation
-
-- `OMOP Common Data Model.html` - Comprehensive OMOP CDM documentation
-
-### Bio-Croissant Specification
-
-- `BIO_CROISSANT_SPECIFICATION.md` - Complete Bio-Croissant format specification (v0.1.0 Draft)
+- `docs/specifications/BIO_CROISSANT_SPECIFICATION.md` - v0.1 specification
+- `docs/specifications/BIO_CROISSANT_SPECIFICATION_v0.2.md` - v0.2 with quality metrics and foreign keys
+- `docs/specifications/BIO_CROISSANT_SPECIFICATION_v0.3.md` - v0.3 with ISO 11179 metadata registry
   - Extends MLCommons Croissant for biomedical/healthcare datasets
   - OMOP CDM v5.4 support with clinical data patterns
+  - ISO 11179 data element concepts and value domains
   - Bioimaging extensions for microscopy and OME-Zarr
   - Whole slide imaging (WSI) support for digital pathology
   - Security, privacy, and de-identification requirements
   - BioSchemas alignment for semantic interoperability
-- `examples/` - Example Bio-Croissant metadata files:
-  - `omop_cdm_synthetic.json` - Synthetic OMOP CDM dataset
+
+### Bio-Croissant Examples
+
+- `docs/examples/` - Example Bio-Croissant metadata files:
+  - `omop_cdm_synthetic.json` - Synthetic OMOP CDM dataset (v0.2)
+  - `omop_cdm_iso11179.json` - OMOP with ISO 11179 metadata (v0.3)
   - `microscopy_ome_zarr.json` - Multi-channel fluorescence microscopy
   - `digital_pathology_wsi.json` - Breast cancer whole slide images
   - `README.md` - Examples documentation and usage patterns
 
-### Project Materials
+### Reference Specifications (External)
 
-- `BIO-20251204T192437Z-3-001.zip` - Archive containing:
-  - Project presentations and documentation
-  - Meeting minutes and working documents
-  - Conference and journal submissions
-  - Tools and visualizers
+- `docs/Croissant specs 1.0/` - MLCommons Croissant reference documentation:
+  - Croissant Format Specification (HTML)
+  - Croissant RAI Specification (HTML)
+- `docs/OMOP CDM specs 5.4/` - OMOP CDM v5.4 reference materials:
+  - OMOP Common Data Model documentation (HTML)
+  - SQL DDL files (PostgreSQL): ddl, primary keys, indices, constraints
+  - CSV field/table level specifications
+  - Oncology extension metadata
+
+### Generated Data
+
+- `data/generated/` - Synthetic OMOP CDM data (1,000 patients, 3,043 conditions)
+- `data/metadata/` - Bio-Croissant metadata files (v0.2 and v0.3)
 
 ## OMOP CDM v5.4 Architecture
 
@@ -119,14 +128,42 @@ Standardized terminologies and concepts:
 
 ### Setup
 ```bash
-pipenv install         # Install dependencies
+pipenv install --dev   # Install dependencies including dev tools
 pipenv shell           # Activate virtual environment
 ```
 
 ### Requirements
 - Python 3.14
 - Dependencies defined in Pipfile:
-  - ipykernel (for Jupyter notebook support)
+  - **Runtime:** faker, pandas, numpy, jsonschema
+  - **Development:** pytest
+  - **Optional:** ipykernel (for Jupyter notebook support)
+
+### Running Tests
+```bash
+pipenv run python -m pytest tests/ -v    # Run all tests (16 tests)
+pipenv run python3 scripts/validate_examples.py      # Validate v0.2 examples
+pipenv run python3 scripts/validate_v0.3.py          # Validate v0.3 examples
+pipenv run python3 scripts/validate_generated.py     # Validate generated data
+```
+
+### Generating Synthetic Data
+```bash
+pipenv run python3 src/generate_synthetic_dataset.py
+# Outputs:
+#   data/generated/person.csv (1,000 patients)
+#   data/generated/condition_occurrence.csv (3,043 conditions)
+#   data/metadata/synthetic_dataset_v0.2.json
+#   data/metadata/synthetic_dataset_v0.3.json
+```
+
+### Converting Bio-Croissant to OMOP CDM
+```bash
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.2.json \
+  output_directory \
+  --format both --dialect postgresql
+```
 
 ## Key Concepts for Development
 

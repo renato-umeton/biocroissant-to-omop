@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><script type="text/javascript">
+    (function() {
+      var container = document.querySelector('#_tcx-zxzbzn1zn78');
+      if (!container) {
+        return;
+      }
+
+      function addToContainer(url, text) {
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('data-tcx-url', url);
+        wrapper.innerText = text;
+        container.appendChild(wrapper);
+      }
+
+      const fetch = window.fetch
+      window.fetch = function() {
+        return Promise.resolve(fetch.apply(window, arguments))
+            .then(async response => {
+              if (response.ok) {
+                try {
+                  const clone = response.clone();
+                  const json = await clone.json();
+                  addToContainer(clone.url, JSON.stringify(json));
+                } catch (err) {}
+              }
+              return response;
+            });
+      };
+
+      var XHR = XMLHttpRequest.prototype;
+      var send = XHR.send;
+      var open = XHR.open;
+      XHR.open = function(method, url) {
+        this.url = url;
+        return open.apply(this, arguments);
+      };
+      XHR.send = function() {
+        this.addEventListener('load', function() {
+          try {
+            const response = this.response;
+            if (response && response.length) {
+              const firstChar = response[0];
+              if (firstChar === '[' || firstChar === '{') {
+                addToContainer(this.url, response);
+              }
+            }
+          } catch (err) {
+            // No-op.
+          }
+        });
+        return send.apply(this, arguments);
+      };
+    })();
+  </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Croissant Format Specification | Croissant site</title>
+<meta name="generator" content="Jekyll v3.10.0">
+<meta property="og:title" content="Croissant Format Specification">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Croissant is a high-level format for machine learning datasets that brings together four rich layers.">
+<meta property="og:description" content="Croissant is a high-level format for machine learning datasets that brings together four rich layers.">
+<link rel="canonical" href="https://docs.mlcommons.org/croissant/docs/croissant-spec.html">
+<meta property="og:url" content="https://docs.mlcommons.org/croissant/docs/croissant-spec.html">
+<meta property="og:site_name" content="Croissant site">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Croissant Format Specification">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Croissant is a high-level format for machine learning datasets that brings together four rich layers.","headline":"Croissant Format Specification","url":"https://docs.mlcommons.org/croissant/docs/croissant-spec.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <style class="anchorjs"></style><link rel="stylesheet" href="Croissant%20Format%20Specification%20_%20Croissant%20site_files/style.css">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/croissant/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  <style id="mis2ph2y.fgk">
+        /* Light Theme (Default) */
+        :root {
+            --menu-bg: #ffffff;
+            --menu-border: #d0d0d0;
+            --menu-shadow: rgba(0,0,0,0.15);
+            --item-text: #333333;
+            --item-hover-bg: #f2f2f2;
+            --item-hover-text: #000000;
+            --separator-bg: #e0e0e0;
+            --arrow-color: #888;
+            --select-all-text: #007bff;
+            --select-all-hover-text: #0056b3;
+            --trigger-bg: rgba(150, 150, 150, 0.2);
+            --trigger-hover-bg: rgba(120, 120, 120, 0.2);
+        }
+
+        #custom-bm-menu-trigger {
+            position: fixed;
+            /* Initial position set by CSS, draggable logic will override with left/top */
+            bottom: 80px;
+            right: 20px;
+            background-color: var(--trigger-bg);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px; /* Slightly larger icon */
+            z-index: 99998;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            user-select: none; /* Crucial for dragging */
+            -webkit-user-select: none; /* Safari */
+            backdrop-filter: blur(4px); /* Enhanced frosted glass */
+            transition: background-color 0.2s; /* Smooth hover effect - note: JS might override this temporarily */
+        }
+        #custom-bm-menu-trigger:hover {
+            background-color: var(--trigger-hover-bg);
+        }
+        #custom-bm-menu-container {
+            display: none;
+            position: fixed; /* top/left will be set by JS */
+            background-color: var(--menu-bg);
+            border: 1px solid var(--menu-border);
+            border-radius: 10px; /* More rounded */
+            z-index: 99999;
+            box-shadow: 0 8px 25px var(--menu-shadow); /* Softer, more spread shadow */
+            padding: 10px 0; /* More vertical padding for items */
+            min-width: 230px;
+        }
+        .custom-bm-menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 25px; /* More padding for easier clicking */
+            text-decoration: none;
+            color: var(--item-text);
+            white-space: nowrap;
+            font-size: 15px; /* Clearer font size */
+            transition: background-color 0.15s, color 0.15s; /* Smooth hover */
+            cursor: pointer;
+        }
+        .custom-bm-menu-item:hover {
+            background-color: var(--item-hover-bg);
+            color: var(--item-hover-text);
+        }
+        .custom-bm-has-submenu {
+            position: relative;
+            justify-content: flex-start;
+        }
+        .submenu-arrow {
+            margin-right: 10px;
+            font-size: 18px;
+            color: var(--arrow-color);
+        }
+        .custom-bm-submenu {
+    display: none;
+    position: absolute;
+    bottom: 100%; /* Change: Position above the parent item */
+    left: 0;
+    width: 100%;
+    background-color: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 25px var(--menu-shadow);
+    padding: 10px 0;
+    margin-bottom: -10px; /* Change: Pull down to align with parent padding */
+    z-index: 100000;
+}
+        .custom-bm-submenu .custom-bm-menu-item {
+            justify-content: flex-start;
+        }
+        .custom-bm-select-all {
+            color: var(--select-all-text);
+            font-weight: 500;
+            margin-left: 15px;
+            text-decoration: none;
+            border: 1px dashed var(--select-all-text);
+            padding: 2px 6px;
+            border-radius: 9999px;
+        }
+        .custom-bm-select-all:hover {
+            color: var(--select-all-hover-text);
+            text-decoration: underline;
+        }
+        .custom-bm-separator {
+            height: 1px;
+            background-color: var(--separator-bg);
+            margin: 8px 15px;
+        }
+
+        /* Dark Theme */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --menu-bg: #2b2b2b;
+                --menu-border: #444;
+                --menu-shadow: rgba(0,0,0,0.4);
+                --item-text: #e1e1e1;
+                --item-hover-bg: #4a4a4a;
+                --item-hover-text: #ffffff;
+                --separator-bg: #444;
+                --arrow-color: #aaa;
+                --select-all-text: #58a6ff;
+                --select-all-hover-text: #80b6f8;
+                --trigger-bg: rgba(40, 40, 40, 0.4);
+                --trigger-hover-bg: rgba(70, 70, 70, 0.5);
+            }
+        }
+    </style></head>
+  <body class="vsc-initialized">
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+
+      <h1 id="croissant-format-specification">Croissant Format Specification</h1>
+<p>Version 1.0</p>
+<p>Published: 2024/03/01</p>
+<p><a href="http://mlcommons.org/croissant/1.0">http://mlcommons.org/croissant/1.0</a></p>
+<p>Authors:</p>
+<ul>
+<li>Omar Benjelloun (Google),</li>
+<li>Elena Simperl (King’s College London &amp; ODI),</li>
+<li>Pierre Marcenac (Google),</li>
+<li>Pierre Ruyssen (Google),</li>
+<li>Costanza Conforti (Google),</li>
+<li>Michael Kuchnik (Meta),</li>
+<li>Jos van der Velde (Open ML),</li>
+<li>Luis Oala (Dotphoton),</li>
+<li>Steffen Vogler (Bayer),</li>
+<li>Mubashara Akthar (King’s College London),</li>
+<li>Nitisha Jain (King’s College London),</li>
+<li>Slava Tykhonov (DANS-KNAW)</li>
+</ul>
+<h2 id="introduction">Introduction<a class="anchorjs-link " href="#introduction" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>Datasets are the basis of machine learning (ML). However, a lack of 
+standardization in the description and semantics of ML datasets has made
+ it increasingly difficult for researchers and practitioners to explore,
+ understand, and use all but a small fraction of popular datasets.</p>
+<p>The Croissant metadata format simplifies how data is used by ML 
+models. It provides a vocabulary for dataset attributes, streamlining 
+how data is loaded across ML frameworks such as PyTorch, TensorFlow or 
+JAX. In doing so, Croissant enables the interchange of datasets between 
+ML frameworks and beyond, tackling a variety of <strong>discoverability</strong>, <strong>portability</strong>, <strong>reproducibility</strong>, and <strong>responsible AI (RAI)</strong> challenges.</p>
+<h3 id="discoverability">Discoverability<a class="anchorjs-link " href="#discoverability" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Once a dataset has Croissant metadata attached to it, dataset search 
+engines can parse this metadata, allowing users to find and use the 
+datasets they need no matter where these datasets have been published (<strong>Figure 1</strong>).
+ For dataset creators, it means their data is discoverable no matter 
+where it is made available online, as long as they use the format.</p>
+<p><img src="Croissant%20Format%20Specification%20_%20Croissant%20site_files/consumers.png" alt="Croissant for dataset consumers" title="Croissant for dataset consumers"></p>
+<p><strong>Figure 1:</strong> A user can search for datasets from a 
+dataset repository or a dataset search engine. Upon finding a dataset 
+that matches user goals, it can be seamlessly loaded into an ML data 
+loader.</p>
+<h3 id="portability-and-reproducibility">Portability and Reproducibility<a class="anchorjs-link " href="#portability-and-reproducibility" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Croissant provides sufficient information for an ML tool to load a 
+dataset, allowing users to incorporate Croissant datasets in the 
+training and evaluation of a model with just a few lines of code (<strong>Figure 2</strong>).
+ Croissant can easily be added to any tools e.g., for data 
+preprocessing, analysis and visualization, or labeling. Since the format
+ is standardized, any Croissant-compliant tool will have an identical 
+interpretation of the data. Furthermore, the information stored in a 
+Croissant record attached to a dataset helps people understand its 
+content and context and compare it with other datasets. All this leads 
+to increased portability and reproducibility in the entire ML ecosystem.</p>
+<p><img src="Croissant%20Format%20Specification%20_%20Croissant%20site_files/cross-product.png" alt="Croissant interoperability" title="Croissant interoperability"></p>
+<p><strong>Figure 2:</strong> Croissant metadata helps loading ML datasets into different ML frameworks</p>
+<p>Creating or changing the metadata is straightforward. A dataset 
+repository can infer it from existing documentation such as a data card;
+ beyond that, editing Croissant dataset descriptions is also supported 
+through a visual editor and a Python library (<strong>Figure 3</strong>).</p>
+<p><img src="Croissant%20Format%20Specification%20_%20Croissant%20site_files/creators.png" alt="Croissant for dataset creatorst" title="Croissant for dataset creators"></p>
+<p><strong>Figure 3:</strong> Croissant benefits dataset creators by 
+providing a standardized representation to edit and catalog datasets, 
+supported by an editor and Python library. Once a dataset is published 
+with the associated metadata, it can be found by dataset search engines.</p>
+<h3 id="responsible-ai">Responsible AI<a class="anchorjs-link " href="#responsible-ai" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>As AI advances at rapid speed there is increased recognition among 
+researchers, practitioners and policy makers that we need to explore, 
+understand, manage, and assess <a href="https://link.springer.com/book/10.1007/978-3-030-30371-6">its economic, social, and environmental impacts</a>. One of the main instruments to operationalise responsible AI (RAI) is dataset documentation.</p>
+<p>This is how Croissant helps address RAI:</p>
+<ol>
+<li>
+<p>It proposes a machine-readable way to capture and publish metadata 
+about ML datasets – this makes existing documentation solutions like <a href="https://sites.research.google/datacardsplaybook/">Data Cards</a> easier to publish, share, discover, and reuse;</p>
+</li>
+<li>
+<p>It records at a granular level how a dataset was created, processed 
+and enriched throughout its lifecycle – this process is meant to be 
+automated as much as possible by integrating Croissant with popular ML 
+frameworks. By allowing the metadata to be loaded automatically, 
+Croissant also enables developers to compute RAI metrics automatically 
+and systematically, identifying potential data quality issues to be 
+fixed.</p>
+</li>
+</ol>
+<p>Croissant is designed to be modular and extensible. One such 
+extension is the Croissant RAI vocabulary, which addresses 7 specific 
+use cases, starting with the data life cycle, data labeling, and 
+participatory scenarios to AI safety and fairness evaluation, 
+traceability, regulatory compliance and inclusion. More details are 
+available in the <a href="http://mlcommons.org/croissant/RAI/1.0">Croissant RAI specification</a>.
+ We welcome additional extensions from the community to meet the needs 
+of specific data modalities (e.g. audio or video) and domains (e.g. 
+geospatial, life sciences, cultural heritage).</p>
+<h2 id="terminology">Terminology<a class="anchorjs-link " href="#terminology" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p><strong>Dataset</strong>: A collection of data points or items 
+reflecting the results of such activities as measuring, reporting, 
+collecting, analyzing, or observing.</p>
+<p><strong>Croissant dataset</strong>: A dataset that comes with a 
+description in the Croissant format. Note that the Croissant description
+ of a dataset does not generally contain the actual data of the dataset 
+(with the exception of small examples or enumerations). The data itself 
+is contained in separate files, referenced by the Croissant dataset 
+description.</p>
+<p><strong>Data record</strong>: A granular part of a dataset, such as an image, text file, or a row in a table.</p>
+<p><strong>Recordset</strong>: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.</p>
+<h2 id="format-example">Format Example<a class="anchorjs-link " href="#format-example" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>To understand the various pieces of a Croissant dataset description, let's look at an example, based on the <a href="https://www.robots.ox.ac.uk/~vgg/data/pass/">PASS</a> dataset.</p>
+<p>Croissant metadata is encoded in JSON-LD.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@context"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"@vocab"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://schema.org/"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Dataset"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"simple-pass"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"conformsTo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://mlcommons.org/croissant/1.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PASS is a large-scale image dataset that does not include any humans ..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"citeAs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@Article{asano21pass, author = </span><span class="se">\"</span><span class="s2">Yuki M. Asano and Christian Rupprecht and ..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://creativecommons.org/licenses/by/4.0/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.robots.ox.ac.uk/~vgg/data/pass/"</span><span class="p">,</span><span class="w">
+</span></code></pre></div></div>
+<p>The beginning of the Croissant description contains general 
+information about the dataset such as name, short description, license 
+and URL. Most of these attributes are from <a href="http://schema.org/">schema.org</a>, with a few additions described in the <a href="#dataset-level-information">Dataset-level information</a> section.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"distribution"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata.csv"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://zenodo.org/record/6615455/files/pass_metadata.csv"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/csv"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0b033707ea49365a5ffdd14615825511"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pass9"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://zenodo.org/record/6615455/files/PASS.9.tar"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/x-tar"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"f4f87af4327fd1a66dd7944b9f59cbcc"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileSet"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pass9"</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image/jpeg"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*.jpg"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+<p>The distribution property contains a description of the resources contained in the dataset, i.e., :</p>
+<ul>
+<li>files, represented using the <code>FileObject</code> class. This dataset contains one CSV file and one archive file.</li>
+<li>Directory &amp; archive contents, represented using the <code>FileSet</code> class. In this dataset, the archive contains a set of jpeg image files.</li>
+</ul>
+<p>See the <a href="#resources">Resources</a> section for a complete description.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"recordSet"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hash"</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_content"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The image content."</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:ImageObject"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="w"> </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"content"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/hash"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The hash of the image, as computed from YFCC-100M."</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="w"> </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"filename"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"([^</span><span class="se">\\</span><span class="s2">/]*)</span><span class="se">\\</span><span class="s2">.jpg"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+          </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata/hash"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/date_taken"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The date the photo was taken."</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Date"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata/datetaken"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+<p>Furthermore, we can describe the structure and the data types in the 
+data using a simple schema that supports flat and nested records called <code>RecordSet</code>. In this example, the dataset defines a single <code>RecordSet</code>, with one record per image in the dataset. Each record has 3 fields:</p>
+<ul>
+<li>the content of the image</li>
+<li>the hash of the image, extracted from its filename</li>
+<li>the date the image was taken, extracted from the metadata CSV file</li>
+</ul>
+<p>The <a href="#recordsets">RecordSets</a> section explains how to define recordsets and fields, as well as extract, transform and join their data.</p>
+<h2 id="prerequisites">Prerequisites<a class="anchorjs-link " href="#prerequisites" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>Before jumping into the main components of a Croissant dataset, we describe some constructs that are used throughout.</p>
+<h3 id="namespaces">Namespaces<a class="anchorjs-link " href="#namespaces" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>The Croissant vocabulary is defined in its owned namespace, identified by the IRI:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://mlcommons.org/croissant/
+</code></pre></div></div>
+<p>We generally abbreviated this namespace IRI using the prefix <code>cr</code>.</p>
+<p>In addition, Croissant relies on the following namespaces:</p>
+<table>
+  <thead>
+    <tr><th>Prefix</th>
+    <th>IRI</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>sc</td>
+    <td>http://schema.org/</td>
+    <td>The <a href="http://schema.org/">schema.org</a> namespace.</td>
+  </tr>
+  <tr>
+    <td>dct</td>
+    <td>http://purl.org/dc/terms/</td>
+    <td>Dublin Core terms.</td>
+  </tr>
+  <tr>
+    <td>wd</td>
+    <td>http://www.wikidata.org/wiki/</td>
+    <td>Wikidata namespace</td>
+  </tr>
+</tbody></table>
+<p>Because Croissant builds on <a href="http://schema.org/">schema.org</a>, we use that as the default namespace in all examples. Croissant terms should be prefixed with <code>cr</code>. We use the JSON-LD context mechanism to define aliases for these terms, so that specifying a prefix is not necessary.</p>
+<p>The Croissant specification is versioned, and the version is included in the URI of this Croissant specification: <code>http://mlcommons.org/croissant/1.0</code></p>
+<p>Croissant datasets must declare that they conform to this 
+specification by including the following property, at the dataset level:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"dct:conformsTo"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"http://mlcommons.org/croissant/1.0"</span><span class="w">
+</span></code></pre></div></div>
+<p>Note that while the Croissant specification is versioned, the 
+Croissant namespace above is not, so the constructs within the Croissant
+ vocabulary will keep stable URIs even when the specification version 
+changes.</p>
+<h3 id="id-and-reference-mechanism">ID and Reference Mechanism<a class="anchorjs-link " href="#id-and-reference-mechanism" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>In Croissant datasets, various elements need to be connected to each other. For instance, a <code>FileObject</code> may be extracted from another <code>FileObject</code>, or a column of a table may reference another table. We therefore need a mechanism to define <strong>identifiers</strong> for parts of a dataset, and to reference them in other places.</p>
+<p>We use the standard JSON-LD mechanism for IDs and references, which relies on using the special <code>@id</code> property. References to objects are also specified using the <code>@id</code>
+ property. They can be differenciated from ID definitions by the fact 
+that no other properties are specified within the same object, e.g., <code>{"@id": "flores200_dataset.tar.gz"}</code> is a reference.</p>
+<p>IDs may be specified as short strings, but they are interpreted as 
+IRIs. The "base" IRI is either the URL of the document (when accessed on
+ the Web), or is specified explicitly in the context, via the <code>@base</code> property (see <a href="https://www.w3.org/TR/json-ld11/#base-iri">JSON-LD specification</a>).</p>
+<p>As a consequence, IDs must be unique within a Croissant dataset. This
+ is fairly natural for "top-level" objects, like instances of <code>FileObject</code>, <code>FileSet</code> or <code>RecordSet</code>. For nested objects, such as <code>field</code>s in <code>RecordSet</code>s, we recommend prefixing their IDs with the ID of the containing object, with a '/' separator. For example the "date taken" <code>field</code> of an "images" <code>RecordSet</code> should have ID <code>images/date_taken</code>.</p>
+<p>Here are some examples of IDs and references to them.</p>
+<p>A set of JSON files included in a tar archive:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flores 200 archive"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flores 200 is hosted on a webserver."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentSize"</span><span class="p">:</span><span class="w"> </span><span class="s2">"25585843 B"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://tinyurl.com/flores200dataset"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/x-gziptar"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b8b0b76783024b85797e5cc75064eb83fc5288b41e9654dabc7be6ae944011f6"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dev_files"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flores 200 dev files"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev files are inside the tar."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/json"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset/dev/*.dev"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>A "foreign key" reference on column "movie_id" from a "ratings" table to a "movies" table:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"IMDB ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Movie id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>In the above example, the <code>@id</code> of a <code>field</code> is prefixed by the <code>@id</code> of the corresponding <code>RecordSet</code>. This ensures the uniqueness, and makes it possible to disambiguate between <code>field</code>s of the same name in different <code>RecordSet</code>s. In this example, both the ratings and movies <code>RecordSet</code>s have a movie_id <code>field</code>.</p>
+<h3 id="croissant-in-web-pages">Croissant in Web Pages<a class="anchorjs-link " href="#croissant-in-web-pages" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Because Croissant builds on <a href="http://schema.org/">schema.org</a>,
+ a vocabulary for adding structured information to web pages, Croissant 
+JSON-LD metadata needs to be embedded inside a web page in order to be 
+indexed and crawled by search engines. You can see an example of how 
+schema.org metadata is embedded in a web page in the schema.org <a href="https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data">developer documentation</a>.</p>
+<p>In the rest of this document, we only describe the actual JSON-LD of Croissant metadata, and omit the wrapping HTML.</p>
+<h2 id="dataset-level-information">Dataset-level Information<a class="anchorjs-link " href="#dataset-level-information" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<h3 id="schemaorgdataset">schema.org/Dataset<a class="anchorjs-link " href="#schemaorgdataset" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Croissant builds on the <a href="http://schema.org/Dataset">schema.org/Dataset</a>
+ vocabulary, which is widely adopted by datasets on the web. An 
+introduction to describing datasets with this vocabulary can be found <a href="https://developers.google.com/search/docs/appearance/structured-data/dataset">here</a>.</p>
+<p><a href="http://schema.org/">Schema.org</a> properties are known to 
+be very flexible in terms of the types of values they accept. We list 
+below the main properties of the vocabulary and their expected type.To 
+facilitate more consistent use of these properties we provide additional
+ constraints on their usage in the context of Croissant datasets. We 
+also specify cardinalities to clarify if a property can take one or many
+ values.</p>
+<p>We organize <a href="http://schema.org/">schema.org</a> properties in three categories: Required, recommended and other properties. The properties starting with the symbol <code>@</code> are defined in JSON-LD, which is our RDF syntax of choice for Croissant.</p>
+<h4 id="required">Required<a class="anchorjs-link " href="#required" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>The following list of properties from <a href="http://schema.org/">schema.org</a> must be specified for every Croissant dataset.</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Comments</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>@context</td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>ONE</td>
+    <td>A set of JSON-LD context definitions that make the rest of the 
+Croissant description less verbose. See the recommended JSON-LD context 
+in <a href="#appendix-1-json-ld-context">Appendix 1</a>.</td>
+  </tr>
+  <tr>
+    <td>@type</td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>The type of a croissant dataset must be <a href="http://schema.org/Dataset">schema.org/Dataset</a>.</td>
+  </tr>
+  <tr>
+    <td><a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#conformsTo">dct:conformsTo</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>ONE</td>
+    <td>Croissant datasets must declare that they conform to the versioned schema: <a href="http://mlcommons.org/croissant/1.0">http://mlcommons.org/croissant/1.0</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/description">description</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>Description of the dataset.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/license">license</a></td>
+    <td>
+      <a href="http://schema.org/CreativeWork">CreativeWork</a><br>
+      <a href="http://schema.org/URL">URL</a>
+    </td>
+    <td>MANY</td>
+    <td>The license of the dataset. Croissant recommends using the URL of a known license, e.g., one of the licenses listed at <a href="https://spdx.org/licenses/">https://spdx.org/licenses/</a>.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/name">name</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>The name of the dataset.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/url">url</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>ONE</td>
+    <td>The URL of the dataset. This generally corresponds to the Web page for the dataset.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/creator">creator</a></td>
+    <td>
+      <a href="http://schema.org/Organization">Organization</a><br>
+      <a href="http://schema.org/Person">Person</a>
+    </td>
+    <td>MANY</td>
+    <td>The creator(s) of the dataset.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/datePublished">datePublished</a></td>
+    <td>
+      <a href="http://schema.org/Date">Date</a><br>
+      <a href="http://schema.org/DateTime">DateTime</a>
+    </td>
+    <td>ONE</td>
+    <td>The date the dataset was published.</td>
+  </tr>
+</tbody></table>
+<h4 id="recommended">Recommended<a class="anchorjs-link " href="#recommended" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>These <a href="http://schema.org/">schema.org</a> properties are recommended for every Croissant dataset.</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Comments</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="http://schema.org/keywords">keywords</a></td>
+    <td>
+      <a href="https://schema.org/DefinedTerm">DefinedTerm</a><br>
+      <a href="http://schema.org/Text">Text</a><br>
+      <a href="http://schema.org/URL">URL</a>
+    </td>
+    <td>MANY</td>
+    <td>A set of keywords associated with the dataset, either as free text, or a DefinedTerm with a formal definition.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/publisher">publisher</a></td>
+    <td>
+      <a href="http://schema.org/Organization">Organization</a><br>
+      <a href="http://schema.org/Person">Person</a>
+    </td>
+    <td>MANY</td>
+    <td>The publisher of the dataset, which may be distinct from its creator.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/version">version</a></td>
+    <td>
+      <a href="http://schema.org/Number">Number</a><br>
+      <a href="http://schema.org/Text">Text</a>
+    </td>
+    <td>ONE</td>
+    <td>The version of the dataset following the requirements below.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/dateCreated">dateCreated</a></td>
+    <td>
+      <a href="http://schema.org/Date">Date</a>
+      <a href="http://schema.org/DateTime">DateTime</a>
+    </td>
+    <td>ONE</td>
+    <td>The date the dataset was initially created.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/dateModified">dateModified</a></td>
+    <td>
+      <a href="http://schema.org/Date">Date</a>
+      <a href="http://schema.org/DateTime">DateTime</a>
+    </td>
+    <td>ONE</td>
+    <td>The date the dataset was last modified.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/sameAs">sameAs</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>MANY</td>
+    <td>The URL of another Web resource that represents the same dataset as this one.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/sdLicense">sdLicence</a></td>
+    <td>
+      <a href="http://schema.org/CreativeWork">CreativeWork</a><br>
+      <a href="http://schema.org/URL">URL</a>
+    </td>
+    <td>MANY</td>
+    <td>A license document that applies to this structured data, typically indicated by URL.</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/inLanguage">inLanguage</a></td>
+    <td>
+      <a href="https://schema.org/Language">Language</a><br>
+      <a href="https://schema.org/Text">Text</a>
+    </td>
+    <td>MANY</td>
+    <td>The language(s) of the content of the dataset.</td>
+  </tr>
+</tbody></table>
+<h4 id="other-schemaorg-properties">Other schema.org Properties<a class="anchorjs-link " href="#other-schemaorg-properties" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Other properties from <a href="http://schema.org/Dataset">schema.org/Dataset</a>
+ or its parent classes can also be specified for Croissant datasets. 
+Dataset authors should decide whether they are useful for their datasets
+ or not.</p>
+<h3 id="modified-and-added-properties">Modified and Added Properties<a class="anchorjs-link " href="#modified-and-added-properties" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Croissant modifies the meaning of one <a href="http://schema.org/">schema.org</a> property, and requires its presence:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Comments</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="http://schema.org/distribution">distribution</a></td>
+    <td>
+      <a href="#fileobject">FileObject</a><br>
+      <a href="#fileset">FileSet</a>
+    </td>
+    <td>MANY</td>
+    <td>By contrast with <a href="http://schema.org/Dataset">schema.org/Dataset</a>, Croissant requires the distribution property to have values of type FileObject or FileSet.</td>
+  </tr>
+</tbody></table>
+<p>The Croissant vocabulary also defines the following optional attributes:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Comments</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="#live-datasets">isLiveDataset</a></td>
+    <td><a href="http://schema.org/Boolean">Boolean</a></td>
+    <td>ONE</td>
+    <td>Whether the dataset is a live dataset.</td>
+  </tr>
+  <tr>
+    <td>citeAs</td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>"A citation to the dataset itself, or a citation for a 
+publication that describes the dataset. Ideally, citations should be 
+expressed using the <a href="https://www.bibtex.org/">bibtex</a> format.<br>
+    Note that this is different from <a href="http://schema.org/citation">schema.org/citation</a>, which is used to make a citation to another publication from this dataset.
+    </td>
+  </tr>
+</tbody></table>
+<h3 id="dataset-versioningcheckpoints">Dataset Versioning/Checkpoints<a class="anchorjs-link " href="#dataset-versioningcheckpoints" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Datasets may change over time. Versioning is hence important to 
+enable reproducibility and reliable documentation. For this, Croissant 
+uses the combination of two elements: a version, and files checksums.</p>
+<h4 id="version">Version<a class="anchorjs-link " href="#version" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Croissant datasets are versioned using the <code>version</code> property defined in <a href="http://schema.org/">schema.org</a>. The recommended versioning scheme to use for datasets is<code>MAJOR.MINOR.PATCH</code>, following <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a>. More specifically:</p>
+<ul>
+<li>If the <code>PATCH</code> version is incremented, the data remains 
+the same, although it might be serialized differently or is packaged 
+using different file formats.</li>
+<li>If the <code>MINOR</code> version is incremented, the existing data 
+is the same and can still be retrieved as it: there might be additional 
+data (e.g. new fields, new RecordSet), or even new records in existing 
+RecordSets, as long as the old recordSets can still be retrieved (eg: 
+the new records are added to a different Split).</li>
+<li>If the <code>MAJOR</code> version is incremented, the existing data 
+has been changed (edited, removed or shuffled records across splits), or
+ extended in a way which doesn't allow for easy access to the data as it
+ was at the previous version.</li>
+</ul>
+<h4 id="checksums">Checksums<a class="anchorjs-link " href="#checksums" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Each one of the <code>FileObject</code>s in a Croissant file may provide a checksum using the <a href="https://schema.org/sha256">sha256</a> property, which contains the hash of the content of the file.</p>
+<p>In versioned datasets, it is strongly recommended to record such checksums for all used <code>FileObject</code>s,
+ as it allows for robustly checking whether the downloaded files 
+correspond to the ones which are declared in the Croissant definition.</p>
+<h4 id="live-datasets">Live Datasets<a class="anchorjs-link " href="#live-datasets" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Live datasets constitute a special form of datasets. The term refers 
+to non-static datasets, whose underlying data evolves continuously (for 
+example, a new snapshot of data is released regularly). However, apart 
+from the underlying change of the data, the logic behind the example 
+generation (e.g. the way the data is extracted, the transformations it 
+undergoes, the main attributes that are collected etc.) is usually 
+stable over time.</p>
+<p>For live datasets, the Croissant boolean property <code>isLiveDataset</code>
+ should be set to True. Moreover, Croissant recommends not to specify 
+checksum on files which are expected to be updated in the future. For 
+example, if a dataset contains one file per calendar day, days that have
+ already occurred in the past are not expected to change and should 
+provide a checksum. However, if the data for the current day is being 
+refreshed hourly, the Croissant file should not have a checksum until 
+the file is no longer expected to be updated. Failing to update the 
+checksum for an updated file may result in the implementation throwing a
+ checksum error. For live datasets, applications are expected to be 
+aware that the dataset is live and subject to changes going forward. For
+ example, to maintain reproducibility, an application should filter data
+ by dates if new data is added over time. Croissant recommends only 
+updating the <code>version</code> property if the dataset structure 
+changes or a backwards-incompatible change is made. For example, if 
+files are updated to reflect more recent data with no other semantic 
+changes, the dataset <code>version</code> should not be updated. 
+However, if an update is a major semantic change for users, updating the
+ version property may be appropriate.</p>
+<h5 id="example-1-daily-refreshes">Example 1: Daily refreshes<a class="anchorjs-link " href="#example-1-daily-refreshes" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h5>
+<p>A financial dataset corresponding to stock prices is now being used 
+for machine learning. To make analysis more modular, the dataset has 
+been historicallyorganized by year. The dataset was initiated in 2000 
+and has been constantly updated till today. Each year has a CSV file of 
+the format "stock_data_&lt;YEAR&gt;.csv", where &lt;YEAR&gt; is the year
+ of the data. The data for the most recent year is updated daily to 
+account for new data. This directory of these files looks something like
+ this:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>stock_data_2000.csv
+stock_data_2001.csv
+stock_data_2002.csv
+...
+stock_data_2021.csv
+stock_data_2022.csv
+stock_data_2023.csv
+</code></pre></div></div>
+<p>Because the dataset is updated continuously, the dataset should set the isLiveDataset to<code>true</code>.
+ Assuming the year is 2023, it is safe to add a checksum for files 
+corresponding to years 2000 to 2022 (inclusive). However, Croissant does
+ not recommend setting the checksum for 2023 until the year is 2024 to 
+avoid mismatches between a prior checksum and the current file. Finally,
+ all files corresponding to prior years should trigger a version update 
+if they are changed (e.g., to reflect a bug fix), since the semantics of
+ the dataset have changed (i.e., history was "rewritten"). However, the 
+current year is understood to be incomplete, so appending new data to 
+the data in the current year should not trigger a version update.</p>
+<h5 id="example-2-daily-snapshots">Example 2: Daily snapshots<a class="anchorjs-link " href="#example-2-daily-snapshots" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h5>
+<p>The same data from Example 1 is exported at a finer granularity to 
+match the daily refresh of the dataset. Accordingly, the data is 
+"snapshotted" into files of the form 
+"stock_data_&lt;MONTH&gt;_&lt;DAY&gt;_&lt;YEAR&gt;.csv" to reflect the 
+month, day, and year of the data in the file. Each file is only written 
+once—when all data from that date is finalized at the end of day.</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>stock_data_1_1_2000.csv
+stock_data_1_2_2000.csv
+stock_data_1_3_2000.csv
+...
+stock_data_6_8_2023.csv
+stock_data_6_9_2023.csv
+stock_data_6_10_2023.csv
+</code></pre></div></div>
+<p>Because the dataset is updated continuously, the dataset should set the <code>isLiveDataset</code>
+ property to true. Since all files are written only once, checksums can 
+be included without risk of synchronization issues. The dataset version 
+should only be updated if a backwards-incompatible change is made (e.g.,
+ a bug fix to a file), since it is expected that a new file will be 
+added every day.</p>
+<h2 id="resources">Resources<a class="anchorjs-link " href="#resources" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>Croissant datasets contain data. Resources describe how that data is organized. Croissant defines two types of resources:</p>
+<ul>
+<li><code>FileObject</code> for individual files that are part of a dataset.</li>
+<li><code>FileSet</code> for homogeneous sets of files that are part of the dataset (e.g., a directory of images).</li>
+</ul>
+<p>While <a href="http://schema.org/Dataset">schema.org/Dataset</a> defines a <code>distribution</code>
+ property, it's insufficient to adequately represent the contents of a 
+dataset, as each distribution corresponds to a single downloadable form 
+of the dataset. In practice, datasets often use <code>distribution</code>
+ to represent separate files that are part of the dataset, but that is 
+technically not a correct use of the property, and is still insufficient
+ to describe datasets with a more complex layout, which is often the 
+case of ML datasets.</p>
+<p>In Croissant, the <code>distribution</code> property contains one or more <code>FileObject</code> or <code>FileSet</code> instead of schema.org's <code>DataDownload.</code></p>
+<h3 id="fileobject">FileObject<a class="anchorjs-link " href="#fileobject" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p><code>FileObject</code> is the Croissant class used to represent individual files that are part of a dataset.</p>
+<p><code>FileObject</code> is a general purpose class that inherits from <a href="http://schema.org/">Schema.org</a> <code>CreativeWork</code>, and can be used to represent instances of more specific types of content like <code>DigitalDocument</code> and <code>MediaObject</code>.</p>
+<p>Most of the important properties needed to describe a <code>FileObject</code> are defined in the classes it inherits from:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="https://schema.org/name">sc:name</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>The name of the file. As much as possible, the name should 
+reflect the name of the file as downloaded, including the file 
+extension. e.g. "images.zip".</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/contentUrl">sc:contentUrl</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>ONE</td>
+    <td>Actual bytes of the media object, for example the image file or video file.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/contentSize">sc:contentSize</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>File size in (mega/kilo/…)bytes. Defaults to bytes if a unit is not specified.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/encodingFormat">sc:encodingFormat</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>The format of the file, given as a mime type.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/sameAs">sc:sameAs</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>MANY</td>
+    <td>URL (or local name) of a FileObject with the same content, but in a different format.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/sha256">sc:sha256</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>ONE</td>
+    <td>Checksum for the file contents.</td>
+  </tr>
+</tbody></table>
+<p>In addition, <code>FileObject</code> defines the following property:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>containedIn</td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>MANY</td>
+    <td>Another <code>FileObject</code> or <code>FileSet</code> that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
+  </tr>
+</tbody></table>
+<p>Let's look at a few examples of <code>FileObject</code> definitions.</p>
+<p>First, a single CSV file:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pass_metadata.csv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://zenodo.org/record/6615455/files/pass_metadata.csv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/csv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0b033707ea49365a5ffdd14615825511"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Next: An archive and some files extracted from it (represented via the <code>containedIn</code> property):</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ml-25m.zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://files.grouplens.org/datasets/movielens/ml-25m.zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6b51fb2759a8657d3bfcbfc42b592ada"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings.csv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ml-25m.zip"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/csv"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies-table"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies.csv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ml-25m.zip"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/csv"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="fileset">FileSet<a class="anchorjs-link " href="#fileset" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>In many datasets, data comes in the form of collections of 
+homogeneous files, such as images, videos or text files, where each file
+ needs to be treated as an individual item, e.g., as a training example.
+ <code>FileSet</code> is a class that describes such collections of files.</p>
+<p>A <code>FileSet</code> is a set of files located in a container, which can be an archive <code>FileObject</code>
+ or a "manifest" file. A FileSet may also specify inclusion / exclusion 
+filters: these are file patterns that give the user flexibility to 
+define which files should be part of the <code>FileSet</code>. For 
+example, include patterns may refer to all images under one or more 
+directories, which exclude patterns may be used to exclude specific 
+images.</p>
+<p><code>FileSet</code> extends <code>sc:Intangible</code>, and defines the following properties:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>containedIn</td>
+    <td>Reference</td>
+    <td>MANY</td>
+    <td>The source of data for the <code>FileSet</code>, e.g., an archive. If multiple values are provided for <code>containedIn</code>, then the union of their contents is taken (e.g., this can be used to combine files from multiple archives).</td>
+  </tr>
+  <tr>
+    <td>includes</td>
+    <td><a href="http://schema.org/Text"></a>Text</td>
+    <td>MANY</td>
+    <td>A glob pattern that specifies the files to include.</td>
+  </tr>
+  <tr>
+    <td>excludes</td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>MANY</td>
+    <td>A glob pattern that specifies the files to exclude.</td>
+  </tr>
+</tbody></table>
+<p>The properties <code>includes</code> and <code>excludes</code> are used to filter the content that should be part of the FileSet. They both use <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob patterns</a>,
+ a common mechanism to specify a set of files along a path, like ".jpg" 
+for all jpg images, or "/foo/pic.jpg" for all jpg images under the "foo"
+ directory whose filename starts with "pic". To get the set of 
+FileObjects included in the FileSet, the include pattern(s) are 
+evaluated first. If multiple <code>includes</code> are specified, the union of their results is taken. Then all the files corresponding to the <code>excludes</code> patterns are removed from that set. <code>includes</code> and <code>excludes</code> patterns are evaluated from the root of the <code>containedIn</code> contents (e.g., the top level directory extracted from an archive).</p>
+<p>Let's now see some examples of how <code>FileSet</code> is used:</p>
+<p>A zip file containing images:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"train2014.zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentSize"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13510573713 B"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://images.cocodataset.org/zips/train2014.zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/zip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"train2014.zip"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image/jpeg"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*.jpg"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>A zip file containing multiple <code>FileSet</code>s and <code>FileObject</code>s:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flores 200 is hosted on a webserver."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentSize"</span><span class="p">:</span><span class="w"> </span><span class="s2">"25585843 B"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://tinyurl.com/flores200dataset"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/x-gzip"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c764ffdeee4894b3002337c5b1e70ecf6f514c00"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"files-dev"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev files are inside the tar."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/json"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset/dev/*.dev"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"files-devtest"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"devtest files are inside the tar."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/json"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset/devtest/*.devtest"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata-dev"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Contains labels for the records in each line in the dev files."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset/metadata_dev.tsv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/tsv"</span><span class="w">
+</span><span class="p">}</span><span class="err">,</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:FileObject"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata-devtest"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Contains labels for the records in each line in the devtest files."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"contentUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset/metadata_devtest.tsv"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"containedIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flores200_dataset.tar.gz"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"encodingFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/tsv"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h2 id="recordsets">RecordSets<a class="anchorjs-link " href="#recordsets" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>While <code>FileObject</code> and <code>FileSet</code> describe the 
+resources contained in a dataset, they do not tell us anything about the
+ way the content within the resources is organized. This is the role of <code>RecordSet</code>.</p>
+<p>A key challenge is that ML data comes in many different formats, 
+including unstructured formats such as text, audio and video, and 
+structured ones such as CSV and JSON. All these formats, no matter their
+ level of machine-readable structuredness, need to be loaded into a 
+common representation for ML purposes, and sometimes combined despite 
+their heterogeneity.</p>
+<p><code>RecordSet</code> provides a common structure description that 
+can be used across different modalities, in terms of records that may 
+contain multiple fields. Unstructured content, like text and images, is 
+represented as single-field records. Tabular data yields one record per 
+row in the table, with fields for each column. Tree-structured data can 
+be described with nested and repeated fields.</p>
+<p>Let's introduce the relevant classes first, before illustrating how they are used through examples.</p>
+<h3 id="recordset">RecordSet<a class="anchorjs-link " href="#recordset" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>A <code>RecordSet</code> describes a set of structured records 
+obtained from one or more data sources (typically a file or set of 
+files) and the structure of these records, expressed as a set of fields 
+(e.g., the columns of a table). A <code>RecordSet</code> can represent flat or nested data.</p>
+<p>In addition to <code>Field</code>s, RecordSet also supports defining a <code>key</code>
+ for the records, i.e., one or more fields whose values are unique 
+across the records. In case the RecordSet represents a small enumeration
+ of values, those can be embedded directly via the <code>data</code> property. Larger <code>RecordSet</code>s will reference <code>FileObject</code>s or <code>FileSet</code>s for their data, via their field definitions, as we will see below.</p>
+<p><code>RecordSet</code> is a subclass of <a href="https://schema.org/Intangible">sc:Intangible</a>. It defines the following additional properties:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>field</td>
+    <td>Field</td>
+    <td>MANY</td>
+    <td>A data element that appears in the records of the <code>RecordSet</code> (e.g., one column of a table).</td>
+  </tr>
+  <tr>
+    <td>key</td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>MANY</td>
+    <td>One or more fields whose values uniquely identify each record in the <code>RecordSet</code>. (See example below.)</td>
+  </tr>
+  <tr>
+    <td>data</td>
+    <td>JSON</td>
+    <td>MANY</td>
+    <td>One or more records that constitute the data of the <code>RecordSet</code>.</td>
+  </tr>
+  <tr>
+    <td>examples</td>
+    <td>
+      JSON<br>
+      <a href="http://schema.org/URL">URL</a>
+    </td>
+    <td>MANY</td>
+    <td>One or more records provided as example content of the <code>RecordSet</code>, or a reference to data source that contains examples.</td>
+  </tr>
+</tbody></table>
+<h3 id="field">Field<a class="anchorjs-link " href="#field" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>A <code>Field</code> is part of a <code>RecordSet</code>. It may represent a column of a table, or a nested data structure or even a nested <code>RecordSet</code> in the case of hierarchical data.</p>
+<p><code>Field</code> is a subclass of <a href="https://schema.org/Intangible">sc:Intangible</a>. It defines the following additional properties:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>source</td>
+    <td>
+      DataSource<br>
+      <a href="http://schema.org/URL">URL</a>
+    </td>
+    <td>ONE</td>
+    <td>The data source of the field. This will generally reference a <code>FileObject</code> or <code>FileSet</code>'s contents (e.g., a specific column of a table).</td>
+  </tr>
+  <tr>
+    <td>dataType</td>
+    <td>DataType</td>
+    <td>MANY</td>
+    <td>The data type of the field, identified by the URI of the corresponding class. It could be either an atomic type (e.g, <code>sc:Integer</code>) or a semantic type (e.g., <code>sc:GeoLocation</code>).</td>
+  </tr>
+  <tr>
+    <td>repeated</td>
+    <td><a href="http://schema.org/Boolean">Boolean</a></td>
+    <td>ONE</td>
+    <td>If true, then the Field is a list of values of type dataType.</td>
+  </tr>
+  <tr>
+    <td>equivalentProperty</td>
+    <td><a href="http://schema.org/URL">URL</a></td>
+    <td>MANY</td>
+    <td>A property that is equivalent to this Field. Used in the case a 
+dataType is specified on the RecordSet to map specific fields to 
+specific properties associated with that dataType.</td>
+  </tr>
+  <tr>
+    <td>references</td>
+    <td>Reference</td>
+    <td>MANY</td>
+    <td>Another <code>Field</code> of another <code>RecordSet</code> that this field references. This is the equivalent of a foreign key reference in a relational database.</td>
+  </tr>
+  <tr>
+    <td>subField</td>
+    <td>Field</td>
+    <td>MANY</td>
+    <td>Another <code>Field</code> that is nested inside this one.</td>
+  </tr>
+  <tr>
+    <td>parentField</td>
+    <td>Reference</td>
+    <td>MANY</td>
+    <td>A special case of <code>SubField</code> that should be hidden because it references a <code>Field</code> that already appears in the <code>RecordSet</code>.</td>
+  </tr>
+</tbody></table>
+<p>Each field has a <code>name</code>, which is its unique identifier within the <code>RecordSet</code>, and a <code>dataType</code>, which can be either an atomic data type or a semantic type (more on that below).</p>
+<p><code>source</code> is the property that is used to specify where the data for the field comes from. This may be a <code>FileObject</code> or <code>FileSet</code>, or a specific subset (e.g., a particular column in a table, or values extracted through a regular expression).</p>
+<p>A <code>Field</code> may reference another <code>Field</code> in another <code>RecordSet</code>, similarly to foreign keys in relational databases, so that they can be joined together.</p>
+<p>Let's see a simple example: The ratings <code>RecordSet</code> below defines the fields user_id, movie_id, rating and timestamp. The movie_id field is a reference to another <code>RecordSet</code>, movies.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/user_id"</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="w"> </span><span class="p">}],</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/user_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"userId"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movieId"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@idfield"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_id"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/rating"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The score of the rating on a five-star scale."</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Float"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rating"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/timestamp"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"timestamp"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>The ratings <code>RecordSet</code> above corresponds to a CSV table, declared elsewhere as a ratings table <code>FileObject</code>. Each field specifies as a source the corresponding column of the CSV file.</p>
+<h3 id="datasource">DataSource<a class="anchorjs-link " href="#datasource" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p><code>RecordSet</code>s specify where to get their data via the <code>dataSource</code> property of Field. <code>DataSource</code> is the class describing the data that can be extracted from files to populate a <code>RecordSet</code>.
+ This class should be used when the data coming from the source needs to
+ be transformed or formatted to be included in the ML dataset; otherwise
+ a simple <code>Reference</code> can be used instead to point to the source.</p>
+<p><code>DataSource</code> is a subclassOf: <a href="https://schema.org/Intangible">sc:Intangible</a> and defines the following properties:</p>
+<table>
+  <thead>
+    <tr><th>Property</th>
+    <th>ExpectedType</th>
+    <th>Cardinality</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>fileObject</td>
+    <td>Reference</td>
+    <td>ONE</td>
+    <td>The name of the referenced <code>FileObject</code> source of the data.</td>
+  </tr>
+  <tr>
+    <td>fileSet</td>
+    <td>Reference</td>
+    <td>ONE</td>
+    <td>The name of the referenced <code>FileSet</code> source of the data.</td>
+  </tr>
+  <tr>
+    <td>recordSet</td>
+    <td>Reference</td>
+    <td>ONE</td>
+    <td>The name of the referenced <code>RecordSet</code> source.</td>
+  </tr>
+  <tr>
+    <td>extract</td>
+    <td>Extract</td>
+    <td>ONE</td>
+    <td>The extraction method from the provided source.</td>
+  </tr>
+  <tr>
+    <td>transform</td>
+    <td>Transform</td>
+    <td>MANY</td>
+    <td>A transformation to apply on source data on top of the extracted method as specified through <code>extract</code>, e.g., a regular expression or JSON query.</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>Format</td>
+    <td>ONE</td>
+    <td>A format to parse the values of the data from text, e.g., a date format or number format.</td>
+  </tr>
+</tbody></table>
+<p>We now describe each of these properties and the corresponding classes in more detail.</p>
+<h4 id="extract">Extract<a class="anchorjs-link " href="#extract" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Sometimes, not all the data from the source is needed, but only a subset. The <code>Extract</code> class can be used to specify how to do that, depending on the type of the data. Here is a breakdown:</p>
+<table>
+  <thead>
+    <tr><th>Source type</th>
+    <th>Property</th>
+    <th>Expected property value</th>
+    <th>Result</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>FileObject or FileSet</td>
+    <td>fileProperty</td>
+    <td>One of:
+      <ul>
+        <li><code>fullpath</code>: The full path to the file within the Croissant extraction or download folders. Example: <code>data/train/metadata.csv</code>.</li>
+        <li><code>filename</code>: The name of the file. In <code>data/train/metadata.csv</code>, the file name is <code>metadata.csv</code>.</li>
+        <li><code>content</code>: The byte content of the file.</li>
+        <li><code>lines</code>: The byte content of each line in the file.</li>
+        <li><code>lineNumbers</code>: The number of each line in the file (starting from 0).</li>
+      </ul>
+    </td>
+    <td>The corresponding property for the FileObject, e.g., the filename.</td>
+  </tr>
+  <tr>
+    <td>CSV (FileObject)</td>
+    <td>column</td>
+    <td>A column name</td>
+    <td>Values in the specified column.</td>
+  </tr>
+  <tr>
+    <td>JSON</td>
+    <td>jsonPath</td>
+    <td>A <a href="https://goessner.net/articles/JsonPath/">JSONPath</a> expression</td>
+    <td>The value(s) obtained by evaluating the JSON path expression.</td>
+  </tr>
+</tbody></table>
+<h4 id="transform">Transform<a class="anchorjs-link " href="#transform" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Croissant supports a few simple transformations that can be applied on the source data:</p>
+<ul>
+<li>delimiter: split a string into an array using the supplied character.</li>
+<li>regex: A regular expression to parse the data.</li>
+<li>jsonQuery: A JSON query to evaluate on the (JSON) data source.</li>
+</ul>
+<p>For example, to extract information from a filename using a regular expression, we can write:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"files"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"filename"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^(train|val|test)2014/.*</span><span class="se">\\</span><span class="s2">.jpg$"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h4 id="format">Format<a class="anchorjs-link " href="#format" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>A format string used to parse the values coming from a <code>DataSource</code>.
+ For example, a date may be represented as the string "2022/11/10", and 
+interpreted into the correct date via the format "yyyy/MM/dd". Formats 
+correspond to a target data type.</p>
+<p>Here are some formats that can be used in Croissant:</p>
+<table>
+  <thead>
+    <tr><th>Data types</th>
+    <th>Format</th>
+    <th>Example</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>
+      <a href="http://schema.org/Date">sc:Date</a><br>
+      <a href="http://schema.org/DateTime">sc:DateTime</a>
+    </td>
+    <td><a href="https://cldr.unicode.org/translation/date-time/date-time-patterns">CLDR Date/Time Patterns</a></td>
+    <td>MM/dd/yyyy</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="http://schema.org/Number">sc:Number</a><br>
+      <a href="http://schema.org/Float">sc:Float</a><br>
+      <a href="http://schema.org/Integer">sc:Integer</a>
+    </td>
+    <td><a href="https://cldr.unicode.org/translation/number-currency-formats/number-and-currency-patterns">CLDR Number and Currency patterns</a></td>
+    <td>0.##E0 (scientific notation with max 2 decimals).</td>
+  </tr>
+  <tr>
+    <td>cr:BoundingBox</td>
+    <td><a href="https://keras.io/api/keras_cv/bounding_box/formats/">Keras bounding box format</a></td>
+    <td>CENTER_XYWH</td>
+  </tr>
+</tbody></table>
+<p>Note that this list is not exhaustive, and not all Croissant implementations will support all formats.</p>
+<h3 id="data-types">Data Types<a class="anchorjs-link " href="#data-types" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Specifying data types on the <code>Fields</code> of <code>RecordSets</code>
+ is crucial for data validation, and downstream processing, e.g., to 
+enable ML frameworks to automatically populate the right data structures
+ when loading datasets.</p>
+<p>Croissant supports two kinds of data types: simple, atomic data types
+ such as integers and strings, and semantic data types, which convey 
+more meaning and can be structured (more on that below).</p>
+<p>Data types can be specified at two levels:</p>
+<ul>
+<li>On individual <code>Field</code>s, to specify a type that each value
+ of that specific field will conform to. This is a standard notion of 
+typing, similar to, say, assigning a type to a column in a database 
+table.</li>
+<li>On an entire <code>RecordSet</code>, to specify a type that each record conforms to, as well as possibly mandatory fields.</li>
+</ul>
+<h4 id="datatype">DataType<a class="anchorjs-link " href="#datatype" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>The data type of values expected for a <code>Field</code> in a <code>RecordSet</code>. This class is inspired by the <code>Datatype</code> class in <a href="https://csvw.org/">CSVW</a>. In addition to simple atomic types, types can be semantic types, such as <code>schema.org</code> classes, as well types defined in other vocabularies.</p>
+<p>A field may have more than a single assigned <code>dataType</code>, in which case at least one must be an atomic data type (e.g.: <code>sc:Text</code>), while other types can provide more semantic information, possibly in the context of ML.</p>
+<p>Commonly used atomic data types:</p>
+<table>
+  <thead>
+    <tr><th>dataType</th>
+    <th>Usage</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="https://schema.org/Boolean">sc:Boolean</a></td>
+    <td>Describes a boolean.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/Date">sc:Date</a></td>
+    <td>Describes a date.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/Float">sc:Float</a></td>
+    <td>Describes a float.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/Integer">sc:Integer</a></td>
+    <td>Describes an integer.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/Text">sc:Text</a></td>
+    <td>Describes a string.</td>
+  </tr>
+</tbody></table>
+<p>Other data types commonly used in ML datasets:</p>
+<table>
+  <thead>
+    <tr><th>dataType</th>
+    <th>Usage</th>
+  </tr></thead>
+  <tbody><tr>
+    <td><a href="https://schema.org/ImageObject">sc:ImageObject</a></td>
+    <td>Describes a field containing the content of an image (pixels).</td>
+  </tr>
+  <tr>
+    <td><a href="http://mlcommons.org/schema/BoundingBox">cr:BoundingBox</a></td>
+    <td>Describes the coordinates of a bounding box (4-number array). Refer to the section "ML-specific features &gt; Bounding boxes".</td>
+  </tr>
+  <tr>
+    <td><a href="http://mlcommons.org/schema/Split">cr:Split</a></td>
+    <td>Describes a RecordSet used to divide data into multiple sets 
+according to intended usage with regards to models. Refer to the section
+ "ML-specific features &gt; Splits".</td>
+  </tr>
+</tbody></table>
+<h4 id="using-data-types-from-other-vocabularies">Using data types from other vocabularies<a class="anchorjs-link " href="#using-data-types-from-other-vocabularies" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Croissant datasets can use data types from other vocabularies, such 
+as Wikidata. These may be supported by the tools consuming the data, but
+ don’t need to. For example:</p>
+<table>
+  <thead>
+    <tr><th>dataType</th>
+    <th>Usage</th>
+  </tr></thead>
+  <tbody><tr>
+    <td>
+      <a href="https://www.wikidata.org/wiki/Q48277">wd:Q48277</a><br>
+      (gender)
+    </td>
+    <td>Describes a Field or a RecordSet whose values are indicative of 
+someone’s gender. This could be used for instance by RAI frameworks and 
+tools to flag possible biases in the data. Values for this RecordSet can
+ be associated with specific gender URLs (eg: <a href="https://www.wikidata.org/wiki/Q6581097">wd:Q6581097</a>, <a href="https://www.wikidata.org/wiki/Q6581072">wd:Q6581072</a>, etc.). Refer to the "Typed RecordSets &gt; Enumerations" section for an example.</td>
+  </tr>
+</tbody></table>
+<p>In the following example, <code>color_sample</code> is a field containing an image, but with no associated machine-readable semantics.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/color_sample"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:ImageObject"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>In the following example, the <code>url</code> field is expected to be a URL, whose semantic type is <a href="https://www.wikidata.org/wiki/Q515">City</a>, so one will expect values of this field to be URLs referring to cities (e.g.: "<a href="https://www.wikidata.org/wiki/Q90">https://www.wikidata.org/wiki/Q90</a>").</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities/url"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"https://schema.org/URL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"https://www.wikidata.org/wiki/Q515"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h4 id="typing-recordsets">Typing RecordSets<a class="anchorjs-link " href="#typing-recordsets" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>As mentioned above, Croissant supports setting the <code>dataType</code> of an entire <code>RecordSet</code>. This means that the records it contains are instances of the corresponding data type. For example, if a <code>RecordSet</code> has the data type <a href="http://schema.org/GeoCoordinates">sc:GeoCoordinates</a>, then its records will be geopoints with a latitude and a longitude.</p>
+<p>More generally, when a <code>RecordSet</code>is assigned a <code>dataType</code>, some or all of its fields must be mapped to properties associated with the data type. These can be done in two ways:</p>
+<ul>
+<li>Either the <code>@id</code> of the field has the name of the property as a suffix, e.g., a field with <code>@id</code> "cities/latitude" corresponds to the property "<a href="http://schema.org/latitude">sc:latitude</a>" associated with the data type <a href="http://schema.org/GeoCoordinates">sc:GeoCoordinates</a>.</li>
+<li>Or there is an explicit mapping specified on the Field, via the property <code>equivalentProperty</code>.</li>
+</ul>
+<p>When a field is mapped to a property, it can inherit the range type 
+of that property (e.g., latitude and longitude can be or of type Text or
+ Number). It may also specify a more restrictive type, as long as it 
+doesn't contradict the rang of the property (e.g., require the values of
+ latitude and longitude to be of type Float).</p>
+<p>A cities <code>RecordSet</code> with fields implicitly mapped to latitude and longitude:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:GeoCoordinates"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities/latitude"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities/longitude"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>A cities <code>RecordSet</code> with fields explicitly mapped to latitude and longitude:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:GeoCoordinates"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities/lat"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"equivalentProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:latitude"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cities/long"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"equivalentProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:longitude"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Note that, just like for <code>Field</code>, a RecordSet might specify multiple <code>dataType</code>s,
+ and have separate fields mapping to their respective properties. We 
+will see below how this feature is used to specify ML-specific 
+information such as splits.</p>
+<h3 id="embedding-data">Embedding data<a class="anchorjs-link " href="#embedding-data" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>While <code>RecordSet</code>s generally describe data that is stored in separate files, it is sometimes useful to include the data of a <code>RecordSet</code> directly in the Croissant dataset definition:</p>
+<ul>
+<li><strong>Enumerations</strong>: Some <code>RecordSet</code>s represent small enumerations of values that are referenced by fields in other <code>RecordSet</code>s. Creating a separate data file for them would be too much of an overhead.</li>
+<li><strong>Examples</strong>: It is often useful to include a few examples of data in <code>RecordSet</code>s,
+ so that users can get an idea of their contents without downloading the
+ corresponding data files. This is particularly important if the dataset
+ is not available for free, or requires access credentials.</li>
+</ul>
+<h4 id="data">Data<a class="anchorjs-link " href="#data" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>For enumerations, <code>RecordSet</code> provides a <code>data</code> property with the range JSON Text.</p>
+<p>In the JSON list of the value of the property, each element 
+corresponds to a record, and uses keys that correspond to the fields of 
+the <code>RecordSet</code>. For example:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gender_enum"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maps gender ids (0, 1) to labeled values."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gender_enum/id"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gender_enum/id"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gender_enum/label"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:String"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"gender_enum/id"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"gender_enum/label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Male"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"gender_enum/id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"gender_enum/label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Female"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h4 id="examples">Examples<a class="anchorjs-link " href="#examples" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>For providing examples, <code>RecordSet</code> provides an <code>examples</code> property. The value of the <code>examples</code> property is similar to that of the <code>data</code> property. The main difference is that examples are only a (small) subset of the values of the <code>RecordSet</code>, while data contains all the records of the corresponding <code>RecordSet</code>.</p>
+<p>If the example values cannot easily be provided directly within the 
+Croissant description, e.g., in the case of images, the examples 
+property can point to another data source. This may be a FileObject or 
+FileSet for simple cases, or another RecordSet for more complex cases.</p>
+<h3 id="joins">Joins<a class="anchorjs-link " href="#joins" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Croissant provides a simple mechanism to create a "foreign key" reference between fields of recordsets. The property <code>references</code> of <code>RecordSet</code> means that values in the <code>Field</code> that contains the reference are taken from the values of the target <code>Field</code>. The target is generally the key of the target <code>RecordSet</code>.</p>
+<p>For example, the <code>ratings</code> <code>RecordSet</code> below has a <code>movie_id</code> field that references the <code>movies</code> <code>RecordSet</code>.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movieId"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Once a reference is defined, Croissant supports joining <code>RecordSet</code>s by "bringing in" properties from the referenced <code>RecordSet</code>.</p>
+<p>Expanding the example above, the ratings <code>RecordSet</code> can have a movie_title Field that comes from the movies <code>RecordSet</code>:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings-table"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movieId"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_id"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_title"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_title"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>This joining feature makes it easy to create denormalized <code>RecordSet</code>s, which are commonly used in ML workflows.</p>
+<p>While the above example joins two tabular files, joining is also 
+possible between structured and unstructured data. This next example 
+shows how to combine in the same <code>RecordSet</code> some images that come from a zipped directory with additional features extracted from a CSV file. <code>FileObject</code> definitions are omitted for brevity.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"recordSet"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/hash"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/hash"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The hash of the image, as computed from YFCC-100M."</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"filename"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"([^</span><span class="se">\\</span><span class="s2">/]*)</span><span class="se">\\</span><span class="s2">.jpg"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata/hash"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_content"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The content of the image."</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:ImageObject"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"content"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/creator_uname"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Unique name of photo creator."</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unickname"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/date_taken"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The date the photo was taken."</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Date"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"datetaken"</span><span class="w"> </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"%Y-%m-%d %H:%M:%S.%f"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="hierarchical-recordsets">Hierarchical RecordSets<a class="anchorjs-link " href="#hierarchical-recordsets" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Croissant <code>RecordSet</code>s provide two mechanisms to represent hierarchical data:</p>
+<h4 id="nested-fields">Nested Fields<a class="anchorjs-link " href="#nested-fields" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p><code>Field</code>s may be nested inside other fields, via the <code>subField</code> property, which makes it possible to group fields logically inside records: for example, a field of type <code>sc:GeoCoordinates</code> may have two <code>subField</code>s: latitude and longitude. Here is what it looks like:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gps_coordinates"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GPS coordinates where the image was taken."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:GeoCoordinates"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"subField"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gps_coordinates/latitude"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Float"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"latitude"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gps_coordinates/longitude"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Float"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"metadata"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"longitude"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Note that the values of these fields may still come from a "flat" 
+source, such as two separate columns of a table, as in the example 
+above.</p>
+<p>Furthermore the field ids "gps_coordinates/latitude" and 
+"gps_coordinates/longitude" are not arbitrary: they correspond to the 
+"latitude" and "longitude" properties associated with the <a href="http://schema.org/GeoCoordinates">sc:GeoCoordinates</a> type. This uses the same property mapping mechanism we introduced in Section <a href="#typing-recordsets">Typing RecordSets</a>.</p>
+<h4 id="nested-records">Nested Records<a class="anchorjs-link " href="#nested-records" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h4>
+<p>Croissant also supports nesting (multiple) records inside a single 
+record. This functionality is often needed to represent the structure of
+ hierarchical formats like the contents of JSON files. It's also useful 
+to "denormalize" data so as to create joins across multiple tables in 
+preparation for loading them into an ML framework.</p>
+<p>Here is an example where a set of "ratings" records (one per user) are nested inside movie records:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/movie_id"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/movie_id"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/movie_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/movie_title"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies/title"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/ratings"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"parentField"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/movie_id"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/movie_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"subField"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/ratings/user_id"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/user_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/ratings/rating"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/rating"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"movies_with_ratings/ratings/timestamp"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ratings/timestamp"</span><span class="w"> </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>This is achieved in a few steps:</p>
+<ul>
+<li>Creating a "container" field of type <code>cr:RecordSet</code>,</li>
+<li>Creating subFields for the structure of the nested records</li>
+<li>In case a join between multiple sources is needed, <code>parentField</code>
+ can be used to make sure the join field does not appear in the child 
+records (here, the movie_id from the ratings table, which is has the 
+same value as movie_id in parent records)</li>
+</ul>
+<h2 id="ml-specific-features">ML-specific Features<a class="anchorjs-link " href="#ml-specific-features" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<p>We now introduce a number of features that are useful in the context 
+of ML data. These are implemented using the primitives defined in the 
+previous sections, generally as new classes or properties defined in the
+ Croissant namespace. ML-specific features are experimental and subject 
+to change based on the needs of ML users.</p>
+<h3 id="categorical-data">Categorical Data<a class="anchorjs-link " href="#categorical-data" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>In machine learning applications, it's often useful to know that some
+ of the data is categorical in nature, and has a finite set of values 
+that can be used, say, for classification. Croissant represents that 
+information by using the <a href="https://schema.org/Enumeration">sc:Enumeration</a> class from <a href="https://schema.org/">schema.org</a>, as a <code>dataType</code> on <code>RecordSet</code>s that hold categorical data.</p>
+<p>These RecordSets must define a <code>name</code> field conforming with the <a href="https://schema.org/name">sc:name</a>
+ definition, i.e. a human-readable text naming the item. They must also 
+specify a key to identify each possible instance. Enumerations should 
+have a <code>url</code> field, which can also be used to uniquely refer to each instance.</p>
+<p>For example, the <a href="https://cocodataset.org/#format-data">COCO</a> dataset defines categories and super-categories (<a href="https://github.com/mlcommons/croissant/blob/main/datasets/1.0/coco2014/metadata.json">Croissant definition</a>),
+ to which are associated other parts of the dataset. Using Croissant, 
+one can describe the COCO super-categories the following way:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"supercategories"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Enumeration"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"supercategories/name"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"supercategories/name"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"supercategories/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"animal"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"supercategories/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"person"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>As other <code>RecordSet</code>s data, <code>sc:Enumeration</code> 
+values can be defined inline (above example), or from another source of 
+data. The following example, also extracted from the Croissant 
+definition of COCO dataset, shows a slightly more complex <code>sc:Enumeration</code> <code>RecordSet</code> used to define the categories, where:</p>
+<ul>
+<li>The enumeration key is not the <code>@id</code> field.</li>
+<li>The data is not defined inline.</li>
+<li>There are other fields, in this case a reference to the supercategory defined in the previous example, also showing how <code>sc:Enumeration</code> <code>RecordSet</code>s can be used.</li>
+</ul>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"categories"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Enumeration"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"categories/identifier"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"categories/identifier"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_annotations/categories/id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"categories/name"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_annotations/categories/name"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"categories/supercategory"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"supercategories/name"</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_annotations/categories/supercategory"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Finally, the following example shows an enumeration featuring the <code>url</code> field to describe the semantic meaning of the enumeration values. It is extracted from the <a href="https://github.com/mlcommons/croissant/blob/main/datasets/1.0/titanic/metadata.json">Titanic Croissant definition</a>,
+ and is used to define the passenger's gender. Wikidata URLs are used to
+ define both the meaning of the general enumeration (gender - Q48277) as
+ well as the meaning of individual enumeration values (female - 
+Q6581072, male - Q6581097).</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"genders"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"sc:Enumeration"</span><span class="p">,</span><span class="w"> </span><span class="s2">"wd:Q48277"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"genders/name"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"genders/name"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"genders/url"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:URL"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"genders/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"female"</span><span class="p">,</span><span class="w"> </span><span class="nl">"genders/url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wd:Q6581072"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"genders/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"male"</span><span class="p">,</span><span class="w"> </span><span class="nl">"genders/url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wd:Q6581097"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="splits">Splits<a class="anchorjs-link " href="#splits" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>ML datasets may come in <a href="https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets">different data splits, intended to be used for different steps of a model building</a>, usually training, validation and test.</p>
+<p>The Croissant format allows for the data to be split arbitrarily into
+ one or multiple splits, which for example allows dataset consumers to 
+load a specific split. This is done by:</p>
+<ol>
+<li>defining the <code>cr:Split</code> semantic <code>dataType</code>; and by</li>
+<li>referring to those split definitions from the partitioned <code>RecordSet</code>(s).</li>
+</ol>
+<p>For example, the following <code>RecordSet</code> defines the "train", "val" and "test" splits as defined by the COCO dataset authors.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"splits"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Split"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"splits/name"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"splits/name"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:Text"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"splits/url"</span><span class="p">,</span><span class="w"> </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w"> </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Split"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"splits/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"train"</span><span class="p">,</span><span class="w"> </span><span class="nl">"splits/url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:TrainingSplit"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"splits/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"val"</span><span class="p">,</span><span class="w"> </span><span class="nl">"splits/url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:ValidationSplit"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"splits/name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test"</span><span class="p">,</span><span class="w"> </span><span class="nl">"splits/url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:TestSplit"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>The example above illustrates the benefit of the <code>url</code> field, used to disambiguate the meaning of names possibly designing the same concept (e.g. "train" and "training").</p>
+<p>Once a datasets splits have been defined, any <code>RecordSet</code> 
+can refer to those using a regular field, as done in the following 
+example, also extracted from the COCO dataset croissant definition:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/split"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-files"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fullpath"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^(train|val|test)2014.zip/.+2014/.*</span><span class="se">\\</span><span class="s2">.jpg$"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"splits/name"</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Note that the field here is named "split", but doesn’t need to: the information of this being a ML split comes from the <code>dataType</code> of the <code>RecordSet</code>
+ it refers to. As one would expect, tools working with the Croissant 
+config format can infer the data files needed for each split. So if a 
+user requests loading only the validation split of the COCO 2014 
+dataset, the tool working with Croissant knows to download the file 
+"val2014.zip", but not "train2014.zip" and "test2014.zip".</p>
+<h3 id="label-data">Label Data<a class="anchorjs-link " href="#label-data" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Most ML workflows use label data. In Croissant, we identify label data using the class <code>cr:Label</code>. Labels will typically appear as fields in a <code>RecordSet</code>. The default semantics is that labels apply to the record they are defined in.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/label"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"sc:Text"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cr:Label"</span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>The <code>cr:Label</code> data type can also be applied to a complex Field, e.g., a nested <code>RecordSet</code>,
+ that contains multiple annotations. The following example, extracted 
+from the COCO2014 Croissant definition, defines the annotations <code>RecordSet</code> as being a label of the images <code>RecordSet</code> it is nested in.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_id"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_id"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_content"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sc:ImageObject"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cr:RecordSet"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cr:Label"</span><span class="p">],</span><span class="w">
+      </span><span class="nl">"parentField"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations/image_id"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/image_id"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"subField"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations/id"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations/category_id"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations/bbox"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:BoundingBox"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="boundingbox">BoundingBox<a class="anchorjs-link " href="#boundingbox" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Bounding boxes are common annotations in computer vision. They 
+describe imaginary rectangles that outline objects or groups of objects 
+in images or videos. Croissant defines the type <code>cr:BoundingBox</code>
+ that interprets any 4-float array as a bounding box. In order to 
+interpret the values, Croissant supports adding a format specification 
+using the <a href="https://keras.io/api/keras_cv/bounding_box/formats/">Keras bounding box format</a>, specified through the property <code>cr:format</code>.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotations/bbox"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The bounding box around annotated object[s]."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:BoundingBox"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_keypoints_annotations"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bbox"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CENTER_XYWH"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="segmentationmask">SegmentationMask<a class="anchorjs-link " href="#segmentationmask" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h3>
+<p>Segmentation masks are common annotations in computer vision. They 
+describe pixel-perfect zones that outline objects or groups of objects 
+in images or videos. Croissant defines <code>cr:SegmentationMask</code> with two manners to describe them:</p>
+<p>Segmentation mask as a polygon:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotation/mask"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The segmentation mask around annotated object[s]."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cr:SegmentationMask"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sc:GeoShape"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_keypoints_annotations"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"w+s(.*)"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"X Y"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Segmentation mask as an image:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:Field"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"images/annotation/mask"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The segmentation mask around annotated object[s]."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"cr:SegmentationMask"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sc:ImageObject"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instancesperson_keypoints_annotations"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<ul>
+<li><code>sc:GeoShape</code> describes segmentation masks as a sequence of coordinates (polygon).</li>
+<li><code>sc:ImageObject</code> describes segmentation masks as image overlays (with pixel = 0 outside of the mask and pixel = 1 inside the mask).</li>
+</ul>
+<h2 id="appendix-1-json-ld-context">Appendix 1: JSON-LD context<a class="anchorjs-link " href="#appendix-1-json-ld-context" aria-label="Anchor" data-anchorjs-icon="" style="font: 1em / 1 anchorjs-icons; padding-left: 0.375em;"></a></h2>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"@context"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"@vocab"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://schema.org/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://schema.org/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cr"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://mlcommons.org/croissant/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"rai"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://mlcommons.org/croissant/RAI/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"dct"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://purl.org/dc/terms/"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"citeAs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:citeAs"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:column"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"conformsTo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dct:conformsTo"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:data"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@json"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"dataType"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:dataType"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@vocab"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"examples"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"@id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:examples"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"@type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@json"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:extract"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:field"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fileProperty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:fileProperty"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fileObject"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:fileObject"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fileSet"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:fileSet"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:format"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"includes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:includes"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"isLiveDataset"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:isLiveDataset"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"jsonPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:jsonPath"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:key"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"md5"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:md5"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"parentField"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:parentField"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:path"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"recordSet"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:recordSet"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"references"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:references"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"regex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:regex"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"repeated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:repeated"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"replace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:replace"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"separator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:separator"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:source"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"subField"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:subField"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"transform"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cr:transform"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="https://github.com/mlcommons/croissant/edit/main/docs/croissant-spec.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="Croissant%20Format%20Specification%20_%20Croissant%20site_files/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  
+
+<div id="custom-bm-menu-trigger">📟</div><div id="custom-bm-menu-container"><a href="#" class="custom-bm-menu-item">✨ SUMMARIZE<span class="custom-bm-select-all">(selectAll)</span></a><a href="#" class="custom-bm-menu-item">💾 SAVE_MARKDOWN</a><a href="#" class="custom-bm-menu-item">♓ Get it at Harvard!</a><a href="#" class="custom-bm-menu-item">🎞️ mp4[0]</a><a href="#" class="custom-bm-menu-item">⤵️ sortScholar</a><a href="#" class="custom-bm-menu-item">💬 Talk to ChatGPT<span class="custom-bm-select-all">(selectAll)</span></a><a href="#" class="custom-bm-menu-item">🍊 ask Claude<span class="custom-bm-select-all">(selectAll)</span></a><a href="#" class="custom-bm-menu-item">🔷 Copy Gemini Prompt<span class="custom-bm-select-all">(selectAll)</span></a><a href="#" class="custom-bm-menu-item">🤖 Generate &amp; Run Code</a><div class="custom-bm-separator"></div><div class="custom-bm-menu-item custom-bm-has-submenu"><span class="submenu-arrow">▾</span> 🛒 multi-page, etc.<div class="custom-bm-submenu"><a href="#" class="custom-bm-menu-item">🛒 Add to Basket</a><a href="#" class="custom-bm-menu-item">📋 View Basket</a><a href="#" class="custom-bm-menu-item">🗑️ Clear Basket</a><a href="#" class="custom-bm-menu-item">📚 Summarize Basket</a><a href="#" class="custom-bm-menu-item">🤖 ChatGPT Basket</a><a href="#" class="custom-bm-menu-item">🧠 Claude Basket</a><a href="#" class="custom-bm-menu-item">💎 Gemini Basket</a><a href="#" class="custom-bm-menu-item">🚫 Hide Menu App</a></div></div></div></body></html>

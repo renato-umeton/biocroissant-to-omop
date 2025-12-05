@@ -135,12 +135,19 @@ biocromop/
 │   │   ├── README_v0.3.md                          # v0.3 guide
 │   │   ├── REVISION_SUMMARY_v0.2.md               # v0.2 changes
 │   │   └── REVISION_SUMMARY_v0.3.md               # v0.3 changes
-│   └── examples/                       # Bio-Croissant examples
-│       ├── omop_cdm_synthetic.json    # OMOP CDM example
-│       ├── omop_cdm_iso11179.json     # ISO 11179 example
-│       ├── microscopy_ome_zarr.json   # Microscopy example
-│       ├── digital_pathology_wsi.json # Pathology example
-│       └── README.md                   # Examples documentation
+│   ├── examples/                       # Bio-Croissant examples
+│   │   ├── omop_cdm_synthetic.json    # OMOP CDM example
+│   │   ├── omop_cdm_iso11179.json     # ISO 11179 example
+│   │   ├── microscopy_ome_zarr.json   # Microscopy example
+│   │   ├── digital_pathology_wsi.json # Pathology example
+│   │   └── README.md                   # Examples documentation
+│   ├── Croissant specs 1.0/            # MLCommons Croissant reference specs
+│   │   ├── Croissant Format Specification (HTML)
+│   │   └── Croissant RAI Specification (HTML)
+│   └── OMOP CDM specs 5.4/             # OMOP CDM v5.4 reference specs
+│       ├── OMOP Common Data Model (HTML)
+│       ├── SQL DDL files (PostgreSQL)
+│       └── CSV field/table specifications
 │
 ├── data/                               # Generated data
 │   ├── generated/                      # Synthetic OMOP CDM data
@@ -175,6 +182,11 @@ biocromop/
 5. **[Synthetic Data Generation Summary](docs/guides/SYNTHETIC_DATA_GENERATION_SUMMARY.md)** - Complete guide to synthetic data generation
 6. **[Bio-Croissant to OMOP Converter](docs/guides/BIOCROISSANT_TO_OMOP_CONVERTER.md)** - Converter usage and API documentation
 7. **[Examples README](docs/examples/README.md)** - Detailed examples documentation
+
+### Reference Specifications
+
+8. **[Croissant specs 1.0/](docs/Croissant%20specs%201.0/)** - MLCommons Croissant format specification and RAI specification (HTML)
+9. **[OMOP CDM specs 5.4/](docs/OMOP%20CDM%20specs%205.4/)** - OMOP Common Data Model v5.4 documentation, SQL DDL, and CSV specifications
 
 ## Usage Examples
 
