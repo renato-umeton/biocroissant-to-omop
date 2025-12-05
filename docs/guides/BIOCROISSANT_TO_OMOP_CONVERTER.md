@@ -55,28 +55,28 @@ pipenv install --dev
 
 ```bash
 # Convert to CSV format
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.2.json \
-  omop_output \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.2.json \
+  data/converted/omop_from_biocroissant_v0.2 \
   --format csv
 
 # Convert to SQL format (DDL + INSERT statements)
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.3.json \
-  omop_output \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.3.json \
+  data/converted/omop_from_biocroissant_v0.3 \
   --format sql \
   --dialect postgresql
 
 # Convert to both CSV and SQL
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.2.json \
-  omop_output \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.2.json \
+  data/converted/omop_from_biocroissant_v0.2 \
   --format both
 
 # Skip validation (not recommended)
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.2.json \
-  omop_output \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.2.json \
+  data/converted/omop_from_biocroissant_v0.2 \
   --no-validate
 ```
 
@@ -84,15 +84,15 @@ pipenv run python3 biocroissant_to_omop.py \
 
 ```python
 from pathlib import Path
-from biocroissant_to_omop import BioCroissantToOMOPConverter
+from src.biocroissant_to_omop import BioCroissantToOMOPConverter
 
 # Initialize converter
 converter = BioCroissantToOMOPConverter()
 
 # Convert to CSV
 result = converter.convert(
-    metadata_path=Path('generated_metadata/synthetic_dataset_v0.2.json'),
-    output_dir=Path('omop_output'),
+    metadata_path=Path('data/metadata/synthetic_dataset_v0.2.json'),
+    output_dir=Path('data/converted/omop_from_biocroissant_v0.2'),
     output_format='csv',
     validate=True
 )
@@ -121,12 +121,12 @@ Validation Results:
   ✓ CONDITION_OCCURRENCE
 
 Output Files:
-  omop_output_v02/PERSON.csv (32 KB, 1,000 rows)
-  omop_output_v02/PERSON_ddl.sql (134 bytes)
-  omop_output_v02/PERSON_data.sql (44 KB)
-  omop_output_v02/CONDITION_OCCURRENCE.csv (97 KB, 3,043 rows)
-  omop_output_v02/CONDITION_OCCURRENCE_ddl.sql (175 bytes)
-  omop_output_v02/CONDITION_OCCURRENCE_data.sql (134 KB)
+  data/converted/omop_from_biocroissant_v0.2/PERSON.csv (32 KB, 1,000 rows)
+  data/converted/omop_from_biocroissant_v0.2/PERSON_ddl.sql (134 bytes)
+  data/converted/omop_from_biocroissant_v0.2/PERSON_data.sql (44 KB)
+  data/converted/omop_from_biocroissant_v0.2/CONDITION_OCCURRENCE.csv (97 KB, 3,043 rows)
+  data/converted/omop_from_biocroissant_v0.2/CONDITION_OCCURRENCE_ddl.sql (175 bytes)
+  data/converted/omop_from_biocroissant_v0.2/CONDITION_OCCURRENCE_data.sql (134 KB)
 ```
 
 ### Bio-Croissant v0.3 → OMOP CDM
@@ -140,12 +140,12 @@ Validation Results:
   ✓ CONDITION_OCCURRENCE
 
 Output Files:
-  omop_output_v03/PERSON.csv (32 KB, 1,000 rows)
-  omop_output_v03/PERSON_ddl.sql (134 bytes)
-  omop_output_v03/PERSON_data.sql (44 KB)
-  omop_output_v03/CONDITION_OCCURRENCE.csv (97 KB, 3,043 rows)
-  omop_output_v03/CONDITION_OCCURRENCE_ddl.sql (175 bytes)
-  omop_output_v03/CONDITION_OCCURRENCE_data.sql (134 KB)
+  data/converted/omop_from_biocroissant_v0.3/PERSON.csv (32 KB, 1,000 rows)
+  data/converted/omop_from_biocroissant_v0.3/PERSON_ddl.sql (134 bytes)
+  data/converted/omop_from_biocroissant_v0.3/PERSON_data.sql (44 KB)
+  data/converted/omop_from_biocroissant_v0.3/CONDITION_OCCURRENCE.csv (97 KB, 3,043 rows)
+  data/converted/omop_from_biocroissant_v0.3/CONDITION_OCCURRENCE_ddl.sql (175 bytes)
+  data/converted/omop_from_biocroissant_v0.3/CONDITION_OCCURRENCE_data.sql (134 KB)
 ```
 
 ## Generated SQL Examples

@@ -46,10 +46,6 @@ Thumbs.db
 # Pipenv
 Pipfile.lock
 
-# Generated OMOP outputs (can be regenerated)
-omop_output_v02/
-omop_output_v03/
-
 # Downloaded reference files (not part of project)
 *.zip
 

@@ -71,20 +71,27 @@ pipenv run python3 src/generate_synthetic_dataset.py
 ### Convert to OMOP CDM
 
 ```bash
-# Convert Bio-Croissant to OMOP CDM format (CSV + SQL)
+# Convert Bio-Croissant v0.2 to OMOP CDM format (CSV + SQL)
 pipenv run python3 src/biocroissant_to_omop.py \
   data/metadata/synthetic_dataset_v0.2.json \
-  omop_output \
+  data/converted/omop_from_biocroissant_v0.2 \
   --format both \
   --dialect postgresql
 
-# Output:
-#   omop_output/PERSON.csv
-#   omop_output/PERSON_ddl.sql
-#   omop_output/PERSON_data.sql
-#   omop_output/CONDITION_OCCURRENCE.csv
-#   omop_output/CONDITION_OCCURRENCE_ddl.sql
-#   omop_output/CONDITION_OCCURRENCE_data.sql
+# Convert Bio-Croissant v0.3 to OMOP CDM format (CSV + SQL)
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.3.json \
+  data/converted/omop_from_biocroissant_v0.3 \
+  --format both \
+  --dialect postgresql
+
+# Output files (in each converted directory):
+#   PERSON.csv                      - OMOP PERSON table data
+#   PERSON_ddl.sql                  - CREATE TABLE statement
+#   PERSON_data.sql                 - INSERT statements
+#   CONDITION_OCCURRENCE.csv        - OMOP CONDITION_OCCURRENCE table data
+#   CONDITION_OCCURRENCE_ddl.sql    - CREATE TABLE statement
+#   CONDITION_OCCURRENCE_data.sql   - INSERT statements
 ```
 
 ### Validate Metadata
@@ -149,13 +156,28 @@ biocromop/
 │       ├── SQL DDL files (PostgreSQL)
 │       └── CSV field/table specifications
 │
-├── data/                               # Generated data
-│   ├── generated/                      # Synthetic OMOP CDM data
+├── data/                               # Data files
+│   ├── generated/                      # Synthetic OMOP CDM source data
 │   │   ├── person.csv                 # 1,000 synthetic patients
 │   │   └── condition_occurrence.csv   # 3,043 conditions
-│   └── metadata/                       # Bio-Croissant metadata
-│       ├── synthetic_dataset_v0.2.json # v0.2 metadata
-│       └── synthetic_dataset_v0.3.json # v0.3 metadata
+│   ├── metadata/                       # Bio-Croissant metadata
+│   │   ├── synthetic_dataset_v0.2.json # v0.2 metadata
+│   │   └── synthetic_dataset_v0.3.json # v0.3 metadata
+│   └── converted/                      # OMOP CDM converted outputs
+│       ├── omop_from_biocroissant_v0.2/ # Converted from v0.2 metadata
+│       │   ├── PERSON.csv              # OMOP PERSON table
+│       │   ├── PERSON_ddl.sql          # Table DDL
+│       │   ├── PERSON_data.sql         # INSERT statements
+│       │   ├── CONDITION_OCCURRENCE.csv
+│       │   ├── CONDITION_OCCURRENCE_ddl.sql
+│       │   └── CONDITION_OCCURRENCE_data.sql
+│       └── omop_from_biocroissant_v0.3/ # Converted from v0.3 metadata
+│           ├── PERSON.csv              # OMOP PERSON table
+│           ├── PERSON_ddl.sql          # Table DDL
+│           ├── PERSON_data.sql         # INSERT statements
+│           ├── CONDITION_OCCURRENCE.csv
+│           ├── CONDITION_OCCURRENCE_ddl.sql
+│           └── CONDITION_OCCURRENCE_data.sql
 │
 └── schema/                             # Schema definitions
     ├── context/                        # JSON-LD contexts
@@ -230,7 +252,7 @@ converter = BioCroissantToOMOPConverter()
 # Convert to multiple formats
 result = converter.convert(
     metadata_path=Path('data/metadata/synthetic_dataset_v0.3.json'),
-    output_dir=Path('omop_output'),
+    output_dir=Path('data/converted/omop_from_biocroissant_v0.3'),
     output_format='both',  # CSV + SQL
     validate=True,
     sql_dialect='postgresql'
