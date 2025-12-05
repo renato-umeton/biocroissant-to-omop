@@ -52,28 +52,28 @@ cd biocromop
 pipenv install --dev
 
 # Verify installation
-pipenv run python -m pytest test_biocroissant_to_omop.py -v
+pipenv run python -m pytest tests/test_biocroissant_to_omop.py -v
 ```
 
 ### Generate Synthetic Dataset
 
 ```bash
 # Generate 1,000 synthetic patients with Bio-Croissant metadata
-pipenv run python3 generate_synthetic_dataset.py
+pipenv run python3 src/generate_synthetic_dataset.py
 
 # Output:
-#   generated_data/person.csv (1,000 patients)
-#   generated_data/condition_occurrence.csv (3,043 conditions)
-#   generated_metadata/synthetic_dataset_v0.2.json
-#   generated_metadata/synthetic_dataset_v0.3.json
+#   data/generated/person.csv (1,000 patients)
+#   data/generated/condition_occurrence.csv (3,043 conditions)
+#   data/metadata/synthetic_dataset_v0.2.json
+#   data/metadata/synthetic_dataset_v0.3.json
 ```
 
 ### Convert to OMOP CDM
 
 ```bash
 # Convert Bio-Croissant to OMOP CDM format (CSV + SQL)
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.2.json \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.2.json \
   omop_output \
   --format both \
   --dialect postgresql
@@ -91,93 +91,97 @@ pipenv run python3 biocroissant_to_omop.py \
 
 ```bash
 # Validate Bio-Croissant v0.2 examples
-pipenv run python3 validate_examples.py
+pipenv run python3 scripts/validate_examples.py
 
 # Validate Bio-Croissant v0.3 metadata
-pipenv run python3 validate_v0.3.py
+pipenv run python3 scripts/validate_v0.3.py
 
 # Validate generated synthetic datasets
-pipenv run python3 validate_generated.py
+pipenv run python3 scripts/validate_generated.py
 ```
 
 ## Project Structure
 
 ```
 biocromop/
-├── README.md                                    # This file
-├── Pipfile                                      # Python dependencies
-├── Pipfile.lock                                 # Locked dependencies
+├── README.md                           # Project overview and documentation
+├── CLAUDE.md                           # Development guidelines
+├── Pipfile                             # Python dependencies
+├── Pipfile.lock                        # Locked dependency versions
+├── .gitignore                          # Git ignore patterns
 │
-├── Bio-Croissant Specifications
-│   ├── BIO_CROISSANT_SPECIFICATION.md          # v0.1 specification
-│   ├── BIO_CROISSANT_SPECIFICATION_v0.2.md     # v0.2 specification
-│   ├── BIO_CROISSANT_SPECIFICATION_v0.3.md     # v0.3 with ISO 11179
-│   ├── REVISION_SUMMARY_v0.2.md                # v0.2 changes
-│   ├── REVISION_SUMMARY_v0.3.md                # v0.3 changes
-│   └── README_v0.3.md                          # v0.3 documentation
+├── src/                                # Source code
+│   ├── __init__.py                     # Package initialization
+│   ├── biocroissant_to_omop.py        # Bio-Croissant → OMOP converter
+│   └── generate_synthetic_dataset.py  # Synthetic data generator
 │
-├── Schemas & Contexts
-│   ├── context/
-│   │   ├── biocroissant-v0.2-context.jsonld    # JSON-LD context v0.2
-│   │   └── biocroissant-v0.3-context.jsonld    # JSON-LD context v0.3
-│   ├── schema/
-│   │   ├── biocroissant-v0.2-schema.json       # JSON Schema v0.2
-│   │   └── biocroissant-v0.3-schema.json       # JSON Schema v0.3
-│   └── value-domains/
-│       └── standard-value-domains.json          # ISO 11179 value domains
+├── tests/                              # Test suite
+│   ├── __init__.py                     # Test package initialization
+│   └── test_biocroissant_to_omop.py   # Converter tests (16 tests, 100% pass)
 │
-├── Examples
-│   └── examples/
-│       ├── omop_cdm_synthetic.json             # OMOP CDM example
-│       ├── microscopy_ome_zarr.json            # Microscopy example
-│       ├── digital_pathology_wsi.json          # Digital pathology example
-│       ├── omop_cdm_iso11179.json              # ISO 11179 example (v0.3)
-│       └── README.md                            # Examples documentation
+├── scripts/                            # Utility scripts
+│   ├── validate_examples.py           # Validate v0.2 examples
+│   ├── validate_v0.3.py               # Validate v0.3 examples
+│   └── validate_generated.py          # Validate generated data
 │
-├── Synthetic Data Generation
-│   ├── generate_synthetic_dataset.py           # Main generator (880 lines)
-│   ├── SYNTHETIC_DATA_GENERATION_SUMMARY.md    # Generation documentation
-│   ├── generated_data/
-│   │   ├── person.csv                          # 1,000 synthetic patients
-│   │   └── condition_occurrence.csv            # 3,043 conditions
-│   └── generated_metadata/
-│       ├── synthetic_dataset_v0.2.json         # v0.2 metadata
-│       └── synthetic_dataset_v0.3.json         # v0.3 metadata
+├── docs/                               # Documentation
+│   ├── specifications/                # Bio-Croissant specifications
+│   │   ├── BIO_CROISSANT_SPECIFICATION.md          # v0.1
+│   │   ├── BIO_CROISSANT_SPECIFICATION_v0.2.md     # v0.2
+│   │   └── BIO_CROISSANT_SPECIFICATION_v0.3.md     # v0.3 with ISO 11179
+│   ├── guides/                         # User guides
+│   │   ├── BIOCROISSANT_TO_OMOP_CONVERTER.md      # Converter guide
+│   │   ├── SYNTHETIC_DATA_GENERATION_SUMMARY.md   # Generator guide
+│   │   ├── README_v0.3.md                          # v0.3 guide
+│   │   ├── REVISION_SUMMARY_v0.2.md               # v0.2 changes
+│   │   └── REVISION_SUMMARY_v0.3.md               # v0.3 changes
+│   └── examples/                       # Bio-Croissant examples
+│       ├── omop_cdm_synthetic.json    # OMOP CDM example
+│       ├── omop_cdm_iso11179.json     # ISO 11179 example
+│       ├── microscopy_ome_zarr.json   # Microscopy example
+│       ├── digital_pathology_wsi.json # Pathology example
+│       └── README.md                   # Examples documentation
 │
-├── Bio-Croissant to OMOP Converter
-│   ├── biocroissant_to_omop.py                 # Main converter (580 lines)
-│   ├── test_biocroissant_to_omop.py            # Test suite (16 tests)
-│   ├── BIOCROISSANT_TO_OMOP_CONVERTER.md       # Converter documentation
-│   ├── omop_output_v02/                        # Converted v0.2 output
-│   └── omop_output_v03/                        # Converted v0.3 output
+├── data/                               # Generated data
+│   ├── generated/                      # Synthetic OMOP CDM data
+│   │   ├── person.csv                 # 1,000 synthetic patients
+│   │   └── condition_occurrence.csv   # 3,043 conditions
+│   └── metadata/                       # Bio-Croissant metadata
+│       ├── synthetic_dataset_v0.2.json # v0.2 metadata
+│       └── synthetic_dataset_v0.3.json # v0.3 metadata
 │
-└── Validation Scripts
-    ├── validate_examples.py                    # Validate v0.2 examples
-    ├── validate_v0.3.py                        # Validate v0.3 examples
-    └── validate_generated.py                   # Validate generated data
+└── schema/                             # Schema definitions
+    ├── context/                        # JSON-LD contexts
+    │   ├── biocroissant-v0.2-context.jsonld
+    │   └── biocroissant-v0.3-context.jsonld
+    ├── definitions/                    # JSON Schemas
+    │   ├── biocroissant-v0.2-schema.json
+    │   └── biocroissant-v0.3-schema.json
+    └── value-domains/                  # ISO 11179 value domains
+        └── standard-value-domains.json
 ```
 
 ## Documentation
 
 ### Core Specifications
 
-1. **[Bio-Croissant v0.2 Specification](BIO_CROISSANT_SPECIFICATION_v0.2.md)** - Complete v0.2 format with OMOP CDM extension
-2. **[Bio-Croissant v0.3 Specification](BIO_CROISSANT_SPECIFICATION_v0.3.md)** - Advanced format with ISO 11179 metadata registry
-3. **[Revision Summary v0.2](REVISION_SUMMARY_v0.2.md)** - Changes from v0.1 to v0.2
-4. **[Revision Summary v0.3](REVISION_SUMMARY_v0.3.md)** - Changes from v0.2 to v0.3
+1. **[Bio-Croissant v0.2 Specification](docs/specifications/BIO_CROISSANT_SPECIFICATION_v0.2.md)** - Complete v0.2 format with OMOP CDM extension
+2. **[Bio-Croissant v0.3 Specification](docs/specifications/BIO_CROISSANT_SPECIFICATION_v0.3.md)** - Advanced format with ISO 11179 metadata registry
+3. **[Revision Summary v0.2](docs/guides/REVISION_SUMMARY_v0.2.md)** - Changes from v0.1 to v0.2
+4. **[Revision Summary v0.3](docs/guides/REVISION_SUMMARY_v0.3.md)** - Changes from v0.2 to v0.3
 
 ### Implementation Guides
 
-5. **[Synthetic Data Generation Summary](SYNTHETIC_DATA_GENERATION_SUMMARY.md)** - Complete guide to synthetic data generation
-6. **[Bio-Croissant to OMOP Converter](BIOCROISSANT_TO_OMOP_CONVERTER.md)** - Converter usage and API documentation
-7. **[Examples README](examples/README.md)** - Detailed examples documentation
+5. **[Synthetic Data Generation Summary](docs/guides/SYNTHETIC_DATA_GENERATION_SUMMARY.md)** - Complete guide to synthetic data generation
+6. **[Bio-Croissant to OMOP Converter](docs/guides/BIOCROISSANT_TO_OMOP_CONVERTER.md)** - Converter usage and API documentation
+7. **[Examples README](docs/examples/README.md)** - Detailed examples documentation
 
 ## Usage Examples
 
 ### Python API - Synthetic Data Generation
 
 ```python
-from generate_synthetic_dataset import (
+from src.generate_synthetic_dataset import (
     OMOPSyntheticDataGenerator,
     BioCroissantMetadataGenerator
 )
@@ -206,14 +210,14 @@ v03_metadata = metadata_gen.generate_v03_metadata()
 
 ```python
 from pathlib import Path
-from biocroissant_to_omop import BioCroissantToOMOPConverter
+from src.biocroissant_to_omop import BioCroissantToOMOPConverter
 
 # Initialize converter
 converter = BioCroissantToOMOPConverter()
 
 # Convert to multiple formats
 result = converter.convert(
-    metadata_path=Path('generated_metadata/synthetic_dataset_v0.3.json'),
+    metadata_path=Path('data/metadata/synthetic_dataset_v0.3.json'),
     output_dir=Path('omop_output'),
     output_format='both',  # CSV + SQL
     validate=True,
@@ -240,26 +244,26 @@ else:
 
 ```bash
 # 1. Generate synthetic dataset
-pipenv run python3 generate_synthetic_dataset.py
+pipenv run python3 src/generate_synthetic_dataset.py
 
 # 2. Validate generated metadata
-pipenv run python3 validate_generated.py
+pipenv run python3 scripts/validate_generated.py
 
 # 3. Convert to OMOP CDM (CSV format)
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.3.json \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.3.json \
   omop_cdm_output \
   --format csv
 
 # 4. Convert to OMOP CDM (SQL format with PostgreSQL dialect)
-pipenv run python3 biocroissant_to_omop.py \
-  generated_metadata/synthetic_dataset_v0.3.json \
+pipenv run python3 src/biocroissant_to_omop.py \
+  data/metadata/synthetic_dataset_v0.3.json \
   omop_cdm_sql \
   --format sql \
   --dialect postgresql
 
 # 5. Run all tests
-pipenv run python -m pytest test_biocroissant_to_omop.py -v
+pipenv run python -m pytest tests/test_biocroissant_to_omop.py -v
 ```
 
 ## Testing
@@ -268,7 +272,7 @@ pipenv run python -m pytest test_biocroissant_to_omop.py -v
 
 ```bash
 # Run converter tests (16 tests)
-pipenv run python -m pytest test_biocroissant_to_omop.py -v
+pipenv run python -m pytest tests/test_biocroissant_to_omop.py -v
 
 # Expected output:
 # 16 passed in 0.21s
@@ -508,10 +512,3 @@ This work is dedicated to the public domain under the Creative Commons CC0 1.0 U
 ## Contact
 
 For questions, issues, or contributions, please refer to the project repository.
-
----
-
-**Project Version:** 1.0.0
-**Last Updated:** 2025-12-04
-**Status:** Production Ready
-**Test Coverage:** 100%
