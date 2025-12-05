@@ -51,11 +51,10 @@ omop_output_v03/
 
 # Downloaded reference files (not part of project)
 *.zip
-*.html
-Croissant*_files/
 
 # BIO folder (archive materials)
 BIO/
 
-# OMOP CDM reference specs (kept for reference but not tracked)
+# External specification references (kept for reference but not tracked)
 docs/OMOP CDM specs 5.4/
+docs/Croissant specs 1.0/
