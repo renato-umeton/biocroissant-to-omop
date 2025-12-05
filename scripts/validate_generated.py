@@ -47,9 +47,9 @@ def validate_file(example_path, schema_path):
         return False
 
 def main():
-    base_path = Path(__file__).parent
-    schema_v03 = base_path / "schema" / "biocroissant-v0.3-schema.json"
-    generated_v03 = base_path / "generated_metadata" / "synthetic_dataset_v0.3.json"
+    base_path = Path(__file__).parent.parent
+    schema_v03 = base_path / "schema" / "definitions" / "biocroissant-v0.3-schema.json"
+    generated_v03 = base_path / "data" / "metadata" / "synthetic_dataset_v0.3.json"
 
     print("\n" + "="*70)
     print("Validating Generated Synthetic Datasets")

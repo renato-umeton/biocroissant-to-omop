@@ -7,7 +7,7 @@ import tempfile
 import shutil
 from pathlib import Path
 import pandas as pd
-from biocroissant_to_omop import (
+from src.biocroissant_to_omop import (
     BioCroissantParser,
     OMOPTableMapper,
     DataExtractor,

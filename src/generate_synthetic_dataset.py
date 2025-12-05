@@ -27,9 +27,10 @@ Faker.seed(42)
 random.seed(42)
 np.random.seed(42)
 
-# Output directories
-DATA_DIR = Path("generated_data")
-OUTPUT_DIR = Path("generated_metadata")
+# Output directories (relative to project root)
+PROJECT_ROOT = Path(__file__).parent.parent
+DATA_DIR = PROJECT_ROOT / "data" / "generated"
+OUTPUT_DIR = PROJECT_ROOT / "data" / "metadata"
 
 # Create directories
 DATA_DIR.mkdir(exist_ok=True)

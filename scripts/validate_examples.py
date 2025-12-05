@@ -43,9 +43,9 @@ def validate_file(example_path, schema_path):
 
 def main():
     """Main validation function."""
-    base_path = Path(__file__).parent
-    schema_path = base_path / "schema" / "biocroissant-v0.2-schema.json"
-    examples_path = base_path / "examples"
+    base_path = Path(__file__).parent.parent
+    schema_path = base_path / "schema" / "definitions" / "biocroissant-v0.2-schema.json"
+    examples_path = base_path / "docs" / "examples"
 
     if not schema_path.exists():
         print(f"Error: Schema file not found at {schema_path}")

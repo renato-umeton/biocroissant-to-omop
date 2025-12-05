@@ -148,10 +148,10 @@ def validate_value_domains(vd_path):
 
 def main():
     """Main validation function."""
-    base_path = Path(__file__).parent
-    schema_path = base_path / "schema" / "biocroissant-v0.3-schema.json"
-    examples_path = base_path / "examples"
-    vd_path = base_path / "value-domains" / "standard-value-domains.json"
+    base_path = Path(__file__).parent.parent
+    schema_path = base_path / "schema" / "definitions" / "biocroissant-v0.3-schema.json"
+    examples_path = base_path / "docs" / "examples"
+    vd_path = base_path / "schema" / "value-domains" / "standard-value-domains.json"
 
     if not schema_path.exists():
         print(f"Error: Schema file not found at {schema_path}")
