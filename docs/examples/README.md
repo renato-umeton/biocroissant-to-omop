@@ -157,7 +157,7 @@ To contribute additional examples:
 2. Ensure all required fields are present
 3. Validate against the schema
 4. Add documentation to this README
-5. Submit via pull request
+5. Submit via pull request at [https://github.com/renato-umeton/biocroissant-to-omop](https://github.com/renato-umeton/biocroissant-to-omop)
 
 ## Bio-Croissant Versions
 

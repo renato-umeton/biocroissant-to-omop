@@ -376,8 +376,8 @@ Bio-Croissant v0.3 implements:
 
 For questions about Bio-Croissant v0.3:
 
-- **Email:** bio-croissant@mlcommons.org
-- **GitHub:** https://github.com/mlcommons/bio-croissant
+- **GitHub:** https://github.com/renato-umeton/biocroissant-to-omop
+- **Issues:** https://github.com/renato-umeton/biocroissant-to-omop/issues
 - **Specification:** BIO_CROISSANT_SPECIFICATION_v0.3.md
 
 ---

@@ -601,9 +601,9 @@ This revision incorporated feedback and best practices from:
 
 ## Contact and Feedback
 
-**Bio-Croissant Working Group**: biocroissant@mlcommons.org
+**GitHub:** https://github.com/renato-umeton/biocroissant-to-omop
 
-**Issue Tracking**: [To be established]
+**Issue Tracking:** https://github.com/renato-umeton/biocroissant-to-omop/issues
 
 **Version History**:
 - v0.1.0 (December 4, 2025) - Initial draft

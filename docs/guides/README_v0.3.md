@@ -47,8 +47,8 @@ Bio-Croissant v0.3 implements [ISO/IEC 11179](https://www.iso.org/standard/78914
 
 ```bash
 # Clone repository
-git clone https://github.com/mlcommons/bio-croissant.git
-cd bio-croissant
+git clone https://github.com/renato-umeton/biocroissant-to-omop.git
+cd biocroissant-to-omop
 
 # Install dependencies
 pipenv install
@@ -284,9 +284,8 @@ Example datasets use CC0 1.0 Universal (Public Domain).
 
 ## Contact
 
-- **Email:** bio-croissant@mlcommons.org
-- **GitHub:** https://github.com/mlcommons/bio-croissant
-- **Issues:** https://github.com/mlcommons/bio-croissant/issues
+- **GitHub:** https://github.com/renato-umeton/biocroissant-to-omop
+- **Issues:** https://github.com/renato-umeton/biocroissant-to-omop/issues
 
 ## Acknowledgments
 

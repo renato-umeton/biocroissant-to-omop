@@ -45,8 +45,8 @@ This project provides a complete implementation of the Bio-Croissant metadata fo
 
 ```bash
 # Clone repository
-git clone <repository-url>
-cd biocromop
+git clone https://github.com/renato-umeton/biocroissant-to-omop.git
+cd biocroissant-to-omop
 
 # Install dependencies with pipenv
 pipenv install --dev
@@ -545,4 +545,7 @@ This work is dedicated to the public domain under the Creative Commons CC0 1.0 U
 
 ## Contact
 
-For questions, issues, or contributions, please refer to the project repository.
+For questions, issues, or contributions:
+
+- **GitHub:** [https://github.com/renato-umeton/biocroissant-to-omop](https://github.com/renato-umeton/biocroissant-to-omop)
+- **Issues:** [https://github.com/renato-umeton/biocroissant-to-omop/issues](https://github.com/renato-umeton/biocroissant-to-omop/issues)
