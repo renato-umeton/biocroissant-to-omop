@@ -2,9 +2,9 @@
 
 ## Executive Summary
 
-This document details the comprehensive revisions made to transform Bio-Croissant from a draft specification (v0.1) to a Candidate Recommendation (v0.2) ready for community input. All critical issues, significant gaps, and technical concerns identified in the detailed review have been addressed.
+This document details the comprehensive revisions made to transform Bio-Croissant from a draft specification (v0.1) to an Updated Working Draft (v0.2) ready for community input. All critical issues, significant gaps, and technical concerns identified in the detailed review have been addressed.
 
-**Status Change:** Working Draft → **Candidate Recommendation**
+**Status Change:** Working Draft → **Updated Working Draft**
 
 **Readiness:** The v0.2 specification is ready for:
 - Community review and feedback
@@ -28,12 +28,10 @@ This document details the comprehensive revisions made to transform Bio-Croissan
 - Clear criteria for determining human subjects: data category, taxonomic range, or individual human records
 - All conditional requirements explicitly documented in tables
 
-```markdown
 | Condition | Required Properties |
-|-----------|-------------------|
+|-----------|---------------------|
 | Contains human subjects data | `bio:deidentificationMethod` |
 | Requires authentication | `bio:authenticatedAccess`, `bio:accessControlMechanism` |
-```
 
 #### 1.2 Complete JSON-LD Context ✓ FIXED
 
@@ -460,7 +458,7 @@ The context file:
 
 | Aspect | v0.1 | v0.2 |
 |--------|------|------|
-| **Status** | Working Draft | Candidate Recommendation |
+| **Status** | Working Draft | Updated Working Draft |
 | **Total Lines** | ~840 | 842 (spec) + 350 (context) + 400 (schema) |
 | **Namespaces** | Unversioned | Versioned (0.2) |
 | **Context** | Incomplete | Complete, separate file |
@@ -607,7 +605,7 @@ This revision incorporated feedback and best practices from:
 
 **Version History**:
 - v0.1.0 (December 4, 2025) - Initial draft
-- v0.2.0 (December 4, 2025) - Candidate Recommendation (this version)
+- v0.2.0 (December 4, 2025) - Updated Working Draft (this version)
 
 ---
 

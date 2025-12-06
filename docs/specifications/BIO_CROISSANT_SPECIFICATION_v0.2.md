@@ -1,8 +1,8 @@
 # Bio-Croissant Format Specification
 
-**Version:** 0.2.0 (Candidate Recommendation)
+**Version:** 0.2.0 (Updated Working Draft)
 **Published:** December 2025
-**Status:** Candidate Recommendation
+**Status:** Updated Working Draft
 **Canonical URI:** `http://mlcommons.org/croissant/bio/0.2`
 **Previous Version:** `http://mlcommons.org/croissant/bio/0.1`
 
@@ -21,7 +21,7 @@ Bio-Croissant is a metadata format extending MLCommons Croissant 1.0 for biomedi
 
 ## Status of This Document
 
-This is a Candidate Recommendation. It has undergone internal review and is ready for community feedback. Implementations are encouraged to provide feedback before final release.
+This is an Updated Working Draft. It has undergone internal review and is ready for community feedback. Implementations are encouraged to provide feedback before final release.
 
 ## Table of Contents
 
@@ -1780,7 +1780,7 @@ Bio-Croissant Working Group: biocroissant@mlcommons.org
 
 ---
 
-**Document Status**: Candidate Recommendation
+**Document Status**: Updated Working Draft
 **Last Updated**: December 4, 2025
 **Next Review**: March 2026
 

@@ -1,7 +1,7 @@
 # Bio-Croissant Metadata Format Specification v0.3
 
 **Version:** 0.3
-**Status:** Candidate Recommendation
+**Status:** Updated Working Draft
 **Date:** 2025-12-04
 **Previous Version:** [v0.2](./BIO_CROISSANT_SPECIFICATION_v0.2.md)
 
@@ -929,6 +929,6 @@ See `value-domains/standard-value-domains.json`
 - [ISO/IEC 11179-6:2023 Registration](https://www.iso.org/standard/78916.html)
 - [Aristotle Metadata - ISO 11179 Guide](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation)
 
-**Document Status:** Candidate Recommendation
+**Document Status:** Updated Working Draft
 **Next Review Date:** 2026-06-04
 **Contact:** bio-croissant@mlcommons.org
