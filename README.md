@@ -1,4 +1,4 @@
-# Bio-Croissant OMOP (biocromop)
+# Bio-Croissant to OMOP (biocroissant-to-omop)
 
 A comprehensive toolkit for biomedical machine learning dataset metadata using the Bio-Croissant format with OMOP Common Data Model integration.
 
@@ -39,9 +39,9 @@ This project provides a complete implementation of the Bio-Croissant metadata fo
 - Support for PostgreSQL, MySQL, SQLite dialects
 - Test-driven development with 16/16 tests passing
 
-## Quick Start
+## 👉 Quick Start
 
-### Installation
+### 1. Installation
 
 ```bash
 # Clone repository
@@ -55,7 +55,7 @@ pipenv install --dev
 pipenv run python -m pytest tests/test_biocroissant_to_omop.py -v
 ```
 
-### Generate Synthetic Dataset
+### 2. Generate synthetic datasets in Bio-Croissant v0.2 and v0.3 formats
 
 ```bash
 # Generate 1,000 synthetic patients with Bio-Croissant metadata
@@ -68,7 +68,7 @@ pipenv run python3 src/generate_synthetic_dataset.py
 #   data/metadata/synthetic_dataset_v0.3.json
 ```
 
-### Convert to OMOP CDM
+### 3. Convert to OMOP CDM
 
 ```bash
 # Convert Bio-Croissant v0.2 to OMOP CDM format (CSV + SQL)
@@ -94,7 +94,7 @@ pipenv run python3 src/biocroissant_to_omop.py \
 #   CONDITION_OCCURRENCE_data.sql   - INSERT statements
 ```
 
-### Validate Metadata
+### 4. Validate Metadata
 
 ```bash
 # Validate Bio-Croissant v0.2 examples
@@ -106,6 +106,7 @@ pipenv run python3 scripts/validate_v0.3.py
 # Validate generated synthetic datasets
 pipenv run python3 scripts/validate_generated.py
 ```
+That's it!
 
 ## Project Structure
 
