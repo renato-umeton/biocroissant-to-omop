@@ -186,7 +186,7 @@ Bio-Croissant v0.2 provides comprehensive biomedical metadata without ISO 11179:
 - Complete JSON-LD context and JSON Schema
 
 **When to use v0.2:**
-- You need stable, production-ready biomedical metadata
+- You need stable biomedical metadata ready for community input
 - ISO 11179 governance features are not required
 - You want simpler metadata without registry overhead
 

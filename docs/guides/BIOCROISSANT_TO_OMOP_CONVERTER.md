@@ -1,12 +1,12 @@
 # Bio-Croissant to OMOP CDM Converter
 
 **Date:** 2025-12-04
-**Status:** ✓ Production Ready
+**Status:** Ready for Community Input
 **Test Coverage:** 16/16 tests passing (100%)
 
 ## Overview
 
-A production-ready converter that transforms Bio-Croissant metadata and datasets into OMOP Common Data Model (CDM) format. Built using test-driven development (TDD) with comprehensive validation and support for multiple output formats.
+A converter that transforms Bio-Croissant metadata and datasets into OMOP Common Data Model (CDM) format, ready for community input. Built using test-driven development (TDD) with comprehensive validation and support for multiple output formats.
 
 ## Features
 

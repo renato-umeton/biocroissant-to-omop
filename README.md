@@ -378,7 +378,7 @@ Convert Bio-Croissant datasets to standard OMOP CDM format:
 - **Validation Engine:** Primary keys, foreign keys, required fields
 - **SQL Dialects:** PostgreSQL, MySQL, SQLite support
 - **Test-Driven:** 100% test coverage with comprehensive test suite
-- **Production Ready:** Handles 1,000+ patients, 3,000+ conditions
+- **Tested:** Handles 1,000+ patients, 3,000+ conditions
 
 ## Data Quality
 

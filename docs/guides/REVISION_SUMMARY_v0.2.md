@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document details the comprehensive revisions made to transform Bio-Croissant from a draft specification (v0.1) to a production-ready Candidate Recommendation (v0.2). All critical issues, significant gaps, and technical concerns identified in the detailed review have been addressed.
+This document details the comprehensive revisions made to transform Bio-Croissant from a draft specification (v0.1) to a Candidate Recommendation (v0.2) ready for community input. All critical issues, significant gaps, and technical concerns identified in the detailed review have been addressed.
 
 **Status Change:** Working Draft → **Candidate Recommendation**
 
@@ -46,7 +46,7 @@ This document details the comprehensive revisions made to transform Bio-Croissan
 - Container specifications (@set, @list) where appropriate
 - Ready for JSON-LD 1.1 processors
 
-**File:** 350+ lines of complete, production-ready context
+**File:** 350+ lines of complete context ready for community input
 
 #### 1.3 Explicit Conformance Levels ✓ FIXED
 
@@ -125,7 +125,7 @@ This document details the comprehensive revisions made to transform Bio-Croissan
   - Type constraints
   - Enum values
   - Foreign key references
-- 400+ line production-ready schema
+- 400+ line schema ready for community input
 
 #### 2.3 OME Integration Details ✓ ADDED
 
@@ -401,7 +401,7 @@ Example:
 
 ### Core Specification
 1. **BIO_CROISSANT_SPECIFICATION_v0.2.md** (842 lines)
-   - Production-ready specification
+   - Specification ready for community input
    - All issues addressed
    - Ready for standardization
 
