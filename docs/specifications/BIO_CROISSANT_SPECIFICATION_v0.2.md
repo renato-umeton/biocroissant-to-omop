@@ -1788,4 +1788,4 @@ Bio-Croissant Working Group: biocroissant@mlcommons.org
 
 **Copyright © 2025 MLCommons Bio-Croissant Working Group**
 
-This document is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+This document is licensed under the MIT License.

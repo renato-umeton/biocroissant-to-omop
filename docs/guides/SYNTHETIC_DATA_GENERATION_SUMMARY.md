@@ -366,4 +366,4 @@ for recordset in metadata['recordSet']:
 
 **Generated:** 2025-12-04
 **Generator Version:** 1.0.0
-**License:** CC0 1.0 Universal (Public Domain)
+**License:** MIT License

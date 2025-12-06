@@ -5,7 +5,7 @@ A comprehensive toolkit for biomedical machine learning dataset metadata using t
 [![Tests](https://img.shields.io/badge/tests-16%2F16%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
 [![Python](https://img.shields.io/badge/python-3.14-blue)]()
-[![License](https://img.shields.io/badge/license-CC0%201.0-blue)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ## Overview
 
@@ -533,9 +533,9 @@ This project was developed using test-driven development (TDD) principles. When 
 
 ## License
 
-CC0 1.0 Universal (Public Domain)
+MIT License
 
-This work is dedicated to the public domain under the Creative Commons CC0 1.0 Universal license. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

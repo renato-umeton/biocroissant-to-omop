@@ -296,7 +296,7 @@ Both conversions achieved:
 
 ## License
 
-CC0 1.0 Universal (Public Domain)
+MIT License
 
 ---
 

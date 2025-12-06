@@ -614,4 +614,4 @@ This revision incorporated feedback and best practices from:
 **Authors**: Bio-Croissant Working Group + AI-Assisted Specification Development
 
 **Copyright © 2025 MLCommons Bio-Croissant Working Group**
-Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)
+Licensed under MIT License

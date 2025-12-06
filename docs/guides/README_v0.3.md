@@ -278,9 +278,7 @@ We welcome contributions! Areas of interest:
 
 ## License
 
-Bio-Croissant is released under Apache 2.0 license.
-
-Example datasets use CC0 1.0 Universal (Public Domain).
+MIT License
 
 ## Contact
 
