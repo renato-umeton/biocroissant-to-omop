@@ -9,7 +9,7 @@
 
 # Bio-Croissant to OMOP (biocroissant-to-omop)
 
-A comprehensive toolkit for biomedical machine learning dataset metadata using the Bio-Croissant format with OMOP Common Data Model integration.
+A prototype toolkit for biomedical machine learning dataset metadata using the Bio-Croissant format with OMOP Common Data Model integration.
 
 [![Tests](https://img.shields.io/badge/tests-16%2F16%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
@@ -18,7 +18,7 @@ A comprehensive toolkit for biomedical machine learning dataset metadata using t
 
 ## Overview
 
-This project provides a complete implementation of the Bio-Croissant metadata format for biomedical datasets, including:
+This project provides a prototype implementation of the Bio-Croissant metadata format for biomedical datasets, including:
 
 - **Bio-Croissant Specifications** (v0.1, v0.2, v0.3) with ISO 11179 metadata registry support
 - **Synthetic Data Generator** for OMOP CDM datasets with complete Bio-Croissant metadata
@@ -115,7 +115,7 @@ pipenv run python3 scripts/validate_v0.3.py
 # Validate generated synthetic datasets
 pipenv run python3 scripts/validate_generated.py
 ```
-That's it!
+That's it! 👈
 
 ## Project Structure
 
@@ -393,11 +393,11 @@ Convert Bio-Croissant datasets to standard OMOP CDM format:
 
 All generated and converted datasets achieve:
 
-- **100% Completeness:** All required OMOP CDM fields populated
-- **100% Referential Integrity:** All foreign keys validated
-- **100% Primary Key Uniqueness:** No duplicate identifiers
+- **Prototype scope:** All required OMOP CDM fields populated
+- **Referential integrity:** All foreign keys validated
+- **Primary Key nniqueness:** No duplicate identifiers
 - **SHA-256 Hashes:** Data integrity verification
-- **Exact Fidelity:** Row count preservation through conversion pipeline
+- **Fidelity:** Row count preservation through conversion pipeline
 
 ## Dependencies
 
@@ -496,17 +496,11 @@ Validation Results:
 5. **Performance Optimization:** Parallel processing for large datasets
 6. **API Server:** REST API for metadata conversion and validation
 
-### Roadmap
-
-- **Q1 2025:** Additional OMOP tables (DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, VISIT_OCCURRENCE)
-- **Q2 2025:** Imaging data generation and conversion
-- **Q3 2025:** Multi-site federation support
-- **Q4 2025:** Production API deployment
-
 ## References
 
 ### Bio-Croissant
 
+- **MLCommons BioCroissant:** Working Group BIO Google Drive
 - **MLCommons Croissant:** [https://mlcommons.org/croissant](https://mlcommons.org/croissant)
 - **Croissant GitHub:** [https://github.com/mlcommons/croissant](https://github.com/mlcommons/croissant)
 - **Bioschemas:** [https://bioschemas.org/](https://bioschemas.org/)
@@ -530,16 +524,6 @@ Validation Results:
 - **Faker Library:** [https://faker.readthedocs.io/](https://faker.readthedocs.io/)
 - **Pandas Documentation:** [https://pandas.pydata.org/docs/](https://pandas.pydata.org/docs/)
 
-## Contributing
-
-This project was developed using test-driven development (TDD) principles. When contributing:
-
-1. Write tests first for new features
-2. Ensure all existing tests pass
-3. Follow existing code style and patterns
-4. Update documentation for API changes
-5. Add examples for new features
-
 ## License
 
 MIT License
@@ -548,14 +532,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **MLCommons Croissant Team** for the base Croissant format
+- **MLCommons Croissant and BioCroissant Teams** 
 - **OHDSI Community** for OMOP Common Data Model
 - **ISO/IEC JTC 1/SC 32** for ISO 11179 metadata registry standards
 - **Bioschemas Community** for biomedical schema.org extensions
 
-## Contact
-
-For questions, issues, or contributions:
-
-- **GitHub:** [https://github.com/renato-umeton/biocroissant-to-omop](https://github.com/renato-umeton/biocroissant-to-omop)
-- **Issues:** [https://github.com/renato-umeton/biocroissant-to-omop/issues](https://github.com/renato-umeton/biocroissant-to-omop/issues)
