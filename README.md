@@ -1,8 +1,13 @@
-# Bio-Croissant to OMOP (biocroissant-to-omop)
-
 [![Introduction](./intro.png)](https://notebooklm.google.com/notebook/70801471-f318-45e2-b054-7cd7d697eab9)
 
-> **Welcome!** Are you new here? [Use this NotebookLM to get caught up with this project in 5 minutes!](https://notebooklm.google.com/notebook/70801471-f318-45e2-b054-7cd7d697eab9)
+> 👋 **Welcome!**
+>
+> Are you new here?
+>
+> [Use this NotebookLM to get caught up with this project in 5 minutes!](https://notebooklm.google.com/notebook/70801471-f318-45e2-b054-7cd7d697eab9)
+> 
+
+# Bio-Croissant to OMOP (biocroissant-to-omop)
 
 A comprehensive toolkit for biomedical machine learning dataset metadata using the Bio-Croissant format with OMOP Common Data Model integration.
 
