@@ -369,7 +369,7 @@ Bio-Croissant v0.3 implements:
 - [ISO/IEC 11179-31:2023 Metamodel](https://www.iso.org/standard/78925.html)
 - [ISO/IEC 11179-5:2015 Naming Principles](https://www.iso.org/standard/60341.html)
 - [ISO/IEC 11179-6:2023 Registration](https://www.iso.org/standard/78916.html)
-- [Aristotle Metadata - ISO 11179 Guide](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation)
+- [Aristotle Metadata - ISO 11179 Guide](https://help.aristotlemetadata.com/subject-matter-and-theory/iso-iec-11179-data-element-representation)
 - [ISO/IEC 11179 - Wikipedia](https://en.wikipedia.org/wiki/ISO/IEC_11179)
 
 ## Contact

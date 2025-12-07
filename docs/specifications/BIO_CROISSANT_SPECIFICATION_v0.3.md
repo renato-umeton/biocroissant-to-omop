@@ -70,7 +70,7 @@ Major additions in v0.3:
 
 ### 2.1 Overview
 
-ISO/IEC 11179 defines a [metadata registry metamodel](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation) where:
+ISO/IEC 11179 defines a [metadata registry metamodel](https://help.aristotlemetadata.com/subject-matter-and-theory/iso-iec-11179-data-element-representation) where:
 
 - **Data Element** = Data Element Concept + Value Domain
 - **Data Element Concept** = Object Class + Property (semantic meaning)
@@ -191,7 +191,7 @@ Following ISO/IEC 11179-6 registration requirements:
   "iso11179:registrationAuthority": {
     "@type": "sc:Organization",
     "name": "MLCommons Bio-Croissant Working Group",
-    "url": "https://mlcommons.org/bio-croissant"
+    "url": "https://mlcommons.org/bio-croissant"  // PLACEHOLDER - URL does not exist yet
   },
 
   "iso11179:registrationStatus": "standard",
@@ -894,7 +894,7 @@ See `value-domains/standard-value-domains.json`
 - [ISO/IEC 11179-3 Metamodel](https://www.iso.org/standard/78925.html)
 - [ISO/IEC 11179-5 Naming Principles](https://www.iso.org/standard/60341.html)
 - [ISO/IEC 11179-6 Registration](https://www.iso.org/standard/78916.html)
-- [Aristotle Metadata Registry Guide](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation)
+- [Aristotle Metadata Registry Guide](https://help.aristotlemetadata.com/subject-matter-and-theory/iso-iec-11179-data-element-representation)
 
 ### 13.4 Migration from v0.2 to v0.3
 
@@ -927,7 +927,7 @@ See `value-domains/standard-value-domains.json`
 - [ISO/IEC 11179-31:2023 Metamodel](https://www.iso.org/standard/78925.html)
 - [ISO/IEC 11179-5:2015 Naming Principles](https://www.iso.org/standard/60341.html)
 - [ISO/IEC 11179-6:2023 Registration](https://www.iso.org/standard/78916.html)
-- [Aristotle Metadata - ISO 11179 Guide](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation)
+- [Aristotle Metadata - ISO 11179 Guide](https://help.aristotlemetadata.com/subject-matter-and-theory/iso-iec-11179-data-element-representation)
 
 **Document Status:** Updated Working Draft
 **Next Review Date:** 2026-06-04

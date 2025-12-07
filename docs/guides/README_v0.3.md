@@ -61,7 +61,7 @@ pipenv run python3 validate_v0.3.py
 
 ```json
 {
-  "@context": "https://mlcommons.org/croissant/bio/0.3/context",
+  "@context": "https://mlcommons.org/croissant/bio/0.3/context",  // PLACEHOLDER - URL does not exist yet
   "@type": "sc:Dataset",
   "dct:conformsTo": [
     "http://mlcommons.org/croissant/1.0",
@@ -268,7 +268,7 @@ We welcome contributions! Areas of interest:
 - [ISO/IEC 11179-31:2023 Metamodel](https://www.iso.org/standard/78925.html)
 - [ISO/IEC 11179-5:2015 Naming Principles](https://www.iso.org/standard/60341.html)
 - [ISO/IEC 11179-6:2023 Registration](https://www.iso.org/standard/78916.html)
-- [Aristotle Metadata Guide](https://help.aristotlecloud.io/subject-matter-and-theory/iso-iec-11179-data-element-representation)
+- [Aristotle Metadata Guide](https://help.aristotlemetadata.com/subject-matter-and-theory/iso-iec-11179-data-element-representation)
 
 ### Related Standards
 - [MLCommons Croissant](https://docs.mlcommons.org/croissant/)

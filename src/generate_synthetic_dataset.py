@@ -300,6 +300,7 @@ class BioCroissantMetadataGenerator:
         print("\nGenerating Bio-Croissant v0.3 metadata with ISO 11179...")
 
         metadata = {
+            # NOTE: Context URL is a PLACEHOLDER - does not exist yet
             "@context": "https://mlcommons.org/croissant/bio/0.3/context",
             "@type": ["sc:Dataset", "bioschemas:Dataset"],
             "dct:conformsTo": [
@@ -355,7 +356,7 @@ class BioCroissantMetadataGenerator:
             "iso11179:registrationAuthority": {
                 "@type": "sc:Organization",
                 "name": "Bio-Croissant Automated Registry",
-                "url": "https://mlcommons.org/bio-croissant"
+                "url": "https://mlcommons.org/bio-croissant"  # PLACEHOLDER - URL does not exist yet
             },
 
             "iso11179:registrationStatus": "standard",
