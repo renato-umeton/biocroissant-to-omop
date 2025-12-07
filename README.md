@@ -23,7 +23,7 @@ This project provides a prototype implementation of the Bio-Croissant metadata f
 - **Bio-Croissant Specifications** (v0.1, v0.2, v0.3) with ISO 11179 metadata registry support
 - **Synthetic Data Generator** for OMOP CDM datasets with complete Bio-Croissant metadata
 - **Bio-Croissant to OMOP CDM Converter** with validation and multiple output formats
-- **Comprehensive Test Suite** with 100% coverage using test-driven development
+- **Test Suite** 16 tests for this proof-of-conxept 
 
 ## Features
 
